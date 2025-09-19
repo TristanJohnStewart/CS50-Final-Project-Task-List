@@ -2,16 +2,79 @@
     ViewData["Title"] = "Home Page";
 }
 
-@*  
-    +--------------------------------------------------+
-    | Create Task "+" | Sort (drop down menu)          |
-    +--------------------------------------------------+
-    +--------------------------------------------------+
-    | Drag Point | Check Box | Title     | Edit        |
-    |            |           | Priority  | Deadline    |
-    |            |           | Notes                   |
-    |            |+-----------------------------------+|
-    |            || Check Box | Sub-Task Title        ||
-    |            |+-----------------------------------+|
-    +--------------------------------------------------+
-*@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" type="button" href="#">Create Task</button>
+        </div>
+
+        <div class="col">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Title</a></li>
+                    <li><a class="dropdown-item" href="#">Deadline</a></li>
+                    <li><a class="dropdown-item" href="#">Priority</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <ul class="list-group">
+        @* repeating tasks *@
+        <li class="list-group-item">
+            <div class="row align-items-center">
+                <div class="col-1 d-flex justify-content-center">
+                    <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                </div>
+
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mb-1">Task Title</h5>
+                        </div>
+
+                        <div class="col">
+                            <div class="float-end">
+                                <button class="btn btn-outline-secondary">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <small>Priority</small>
+                        </div>
+
+                        <div class="col">
+                            <small>Deadline</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <p class="mb-1">Some placeholder content in a paragraph.</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <ul class="list-group">
+                                @* repeating sub-tasks *@
+                                <li class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                                    <label class="form-check-label" for="firstCheckbox">First Sub-Task</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </li>
+    </ul>
+</div> 
