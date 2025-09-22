@@ -7,26 +7,61 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">Title</span>
+            <div class="mb-3">
+                <label for="titleInput" class="form-label">Title</label>
 
-                <input type="text" class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="titleInput" placeholder="Title">
             </div>
         </div>
-    </div>    
+    </div>
 
     <div class="row">
         <div class="col">
-            <div class="input-group mb-3">
-                <label class="input-group-text" id="basic-addon1">Notes</label>
+            <div class="mb-3">
+                <label for="notesInput" class="form-label">Notes</label>
 
-                <input type="text" class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="notesInput" placeholder="Notes...">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            deadline selection here
+        </div>
+
+        <div class="col">
+            <div class="mb-3">
+                <label for="priorityInput" class="form-label">Priority</label>
+
+                <select class="form-select" id="priorityInput" aria-label="Default select example">
+                    <option selected>None</option>
+                    <option value="1">Low</option>
+                    <option value="2">Medium</option>
+                    <option value="3">High</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="mb-3">
+                <label for="repeatInput" class="form-label">Repeat</label>
+
+                <select class="form-select" id="repeatInput" aria-label="Default select example">
+                    <option selected>None</option>
+                    <option value="1">Daily</option>
+                    <option value="2">Weekly</option>
+                    <option value="3">Monthly</option>
+                    <option value="4">Yearly</option>
+                </select>
             </div>
         </div>
     </div>
 </div>
 
-@*  
+@*
     Title:
     Input Box
 
@@ -41,13 +76,13 @@
     +--------------------------------------------------------------+
     | Sub-Task Title / Input Box | Delete Sub-Task "-" or "Delete" |
     +--------------------------------------------------------------+
-    (Add sub-task button should be replaced by a new sub-task list entry with input box and delete buttons, 
+    (Add sub-task button should be replaced by a new sub-task list entry with input box and delete buttons,
     then get redrawn at the bottom of the list)
-    
-    Repeat:
-    Drop Down Menu with list of repeat types 
 
-    Priority: 
+    Repeat:
+    Drop Down Menu with list of repeat types
+
+    Priority:
     Drop Down Menu
 
     Save Button | Cancel Button
