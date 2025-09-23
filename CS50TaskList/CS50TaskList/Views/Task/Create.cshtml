@@ -13,9 +13,9 @@
                 <input type="text" class="form-control" id="titleInput" placeholder="Title">
             </div>
         </div>
-    </div>
 
-    <div class="row">
+        @* <div class="w-100 d-none d-md-block"></div> *@
+
         <div class="col">
             <div class="mb-3">
                 <label for="notesInput" class="form-label">Notes</label>
@@ -24,6 +24,10 @@
             </div>
         </div>
     </div>
+
+    @* <div class="row">
+
+    </div> *@
 
     <div class="row">
         <div class="col">
@@ -59,6 +63,34 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="mb-3">
+                <label for="subTaskInput" class="form-label">Sub-Tasks</label>
+
+                <div id="subTaskInput">
+                    @* all sub-tasks are listed in order with any new sub-tasks appended onto that list *@
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">-</button>
+                        <input type="text" class="form-control" value="What ever the name of the sub-task is" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">+</button>
+                        <input type="text" class="form-control" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-primary" href="#">Create Task</a> @* asp-controller="Task" asp-action="CreateConfirm" *@
+            <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Cancel</a>
+        </div>
+    </div>
 </div>
 
 @*
@@ -71,6 +103,12 @@
     Deadline:
     Calendar Selection
 
+    Repeat:
+    Drop Down Menu with list of repeat types
+
+    Priority:
+    Drop Down Menu
+
     Sub-Tasks:
     Add Sub-Task Button
     +--------------------------------------------------------------+
@@ -78,12 +116,6 @@
     +--------------------------------------------------------------+
     (Add sub-task button should be replaced by a new sub-task list entry with input box and delete buttons,
     then get redrawn at the bottom of the list)
-
-    Repeat:
-    Drop Down Menu with list of repeat types
-
-    Priority:
-    Drop Down Menu
 
     Save Button | Cancel Button
 *@
