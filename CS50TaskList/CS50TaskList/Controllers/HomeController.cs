@@ -1,5 +1,6 @@
 using CS50TaskList.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using System.Diagnostics;
 
 namespace CS50TaskList.Controllers
@@ -13,6 +14,11 @@ namespace CS50TaskList.Controllers
             _logger = logger;
         }
 
+        //public IActionResult Create() 
+        //{
+        //    return View("Views/Create/Index.cshtml");
+        //}
+        
         public IActionResult Index()
         {
             return View();
