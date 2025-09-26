@@ -1,6 +1,7 @@
 using CS50TaskList.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace CS50TaskList.Controllers
