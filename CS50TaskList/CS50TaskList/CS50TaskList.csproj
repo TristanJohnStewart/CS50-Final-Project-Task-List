@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CS50TaskList-c1e37027-b4b8-4dd3-9e08-dc16e7a69fe2</UserSecretsId>
   </PropertyGroup>
 
