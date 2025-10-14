@@ -1,6 +1,7 @@
 ﻿using CS50TaskList.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CS50TaskList.Models
 {
@@ -9,7 +10,8 @@ namespace CS50TaskList.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Notes { get; set; }
-        public DateTimeOffset Deadline { get; set; }
+        public DateTimeOffset? Deadline { get; set; }
+        [Display(Name = "Repeat")]
         public RecurranceType Recurrance { get; set; }
         public PriorityType Priority { get; set; }
         public int Position { get; set; }
