@@ -3,23 +3,26 @@
 }
 @model List<CS50TaskList.Models.TaskModel>
 
+
+
 <div class="container">
     <div class="row">
         <div class="col">
-            <a class="btn btn-primary" asp-controller="Task" asp-action="Create">Create Task</a>
+            <a asp-action="Create" asp-controller="Task" class="btn btn-primary">Create Task</a>
         </div>
 
         <div class="col">
             <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Sort By
-                </button>
+                <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">Sort By</button>
 
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">None</a></li>
-                    <li><a class="dropdown-item" href="#">Title</a></li>
-                    <li><a class="dropdown-item" href="#">Deadline</a></li>
-                    <li><a class="dropdown-item" href="#">Priority</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">None</a></li>
+                    <li class="dropdown-item" onclick="sortList()">Title</li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Title - Ascending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Deadline - Descending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Deadline - Ascending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Priority - Descending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Priority - Ascending</a></li>
                 </ul>
             </div>
         </div>
@@ -27,13 +30,14 @@
 </div>
 
 <div class="container">
-    <ul class="list-group">
-        @* repeating tasks *@
+    <ul class="list-group" id="taskList">
         @if (Model != null)
         {
             foreach (TaskModel task in Model)
             {
                 <li class="list-group-item">
+                    <div hidden id="title">@task.Title</div>
+
                     <div class="row align-items-center">
                         <div class="col-1 d-flex justify-content-center">
                             <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
@@ -42,40 +46,45 @@
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="mb-1">Task Title</h5>
+                                    <h5 class="mb-1">@task.Title</h5>
                                 </div>
 
                                 <div class="col">
                                     <div class="float-end">
-                                        <a class="btn btn-outline-secondary" asp-controller="Task" asp-action="Edit">Edit</a>
+                                        <a asp-action="Edit" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-outline-secondary">Edit</a>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col">
-                                    <small>Priority</small>
+                                    <small><b>Priority: </b>@task.Priority.ToString()</small>
                                 </div>
 
                                 <div class="col">
-                                    <small>Deadline</small>
+                                    <small><b>Deadline: </b>@task.Deadline.ToString()</small>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col">
-                                    <p class="mb-1">Some placeholder content in a paragraph.</p>
+                                    <p class="mb-1">@task.Notes</p>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col">
                                     <ul class="list-group">
-                                        @* repeating sub-tasks *@
-                                        <li class="list-group-item">
-                                            <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
-                                            <label class="form-check-label" for="firstCheckbox">First Sub-Task</label>
-                                        </li>
+                                        @if (task.SubTasks != null)
+                                        {
+                                            @foreach (SubTaskModel subTask in task.SubTasks)
+                                            {
+                                                <li class="list-group-item">
+                                                    <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                                                    <label class="form-check-label" for="firstCheckbox">First Sub-Task</label>
+                                                </li>
+                                            }
+                                        }
                                     </ul>
                                 </div>
                             </div>
@@ -84,54 +93,64 @@
                 </li>
             }
         }
-        <li class="list-group-item">
-            <div class="row align-items-center">
-                <div class="col-1 d-flex justify-content-center">
-                    <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
-                </div>
-
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <h5 class="mb-1">Task Title</h5>
-                        </div>
-
-                        <div class="col">
-                            <div class="float-end">
-                                <a class="btn btn-outline-secondary" asp-controller="Task" asp-action="Edit">Edit</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
-                            <small>Priority</small>
-                        </div>
-
-                        <div class="col">
-                            <small>Deadline</small>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
-                            <p class="mb-1">Some placeholder content in a paragraph.</p>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
-                            <ul class="list-group">
-                                @* repeating sub-tasks *@
-                                <li class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
-                                    <label class="form-check-label" for="firstCheckbox">First Sub-Task</label>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>  
-            </div>
-        </li>
     </ul>
 </div> 
+
+<script>
+    function sortList(criteria) {
+        var direction = "asc", 
+            isSwitching = true,
+            list = document.getElementById("taskList"),
+            switchCount = 0;
+
+        while (isSwitching == false) {
+            isSwitching = false;
+            var items = list.getElementsByTagName("LI");
+
+            for (var i = 0; i < (items.length - 1); i++) {
+                var shouldSwitch = false,
+                    itemOne = items[i].innerHTML.getElementById(criteria),
+                    itemTwo = items[i + 1].innerHTML.getElementById(criteria);
+
+                if (criteria == "title") {
+                    itemOne = itemOne.innerHTML.toLowerCase();
+                    itemTwo = itemTwo.innerHTML.toLowerCase();
+                }
+
+                if (direction == "asc") {
+                    if (directionCheck(itemOne, itemTwo) == true) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                else if (direction == "desc") {
+                    if (directionCheck(itemTwo, itemOne) == true) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (shouldSwitch == true) {
+                b[i].parentNode.insertBefore(b[i + 1], b[i]);
+                switching = true;
+                switchCount++;
+            }
+            else {
+                if (switchCount == 0 && direction == "asc") {
+                    direction = "desc";
+                    isSwitching = true;
+                }
+            }
+        }
+    }
+
+    function directionCheck(a, b) {
+        if (a > b) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+</script>

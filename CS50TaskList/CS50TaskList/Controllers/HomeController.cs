@@ -21,9 +21,8 @@ namespace CS50TaskList.Controllers
         private readonly ApplicationDbContext _context;
         public HomeController(ApplicationDbContext context) { _context = context; }
         
-        public async System.Threading.Tasks.Task<ActionResult> Index()
+        public async System.Threading.Tasks.Task<ActionResult> Index() 
         {
-            //string userId = null;
             var tasks = await _context.Tasks.ToListAsync();
 
             if (tasks == null)
@@ -51,13 +50,6 @@ namespace CS50TaskList.Controllers
             }
 
             return View(model);
-            
-            //if (tasks == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(tasks);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
