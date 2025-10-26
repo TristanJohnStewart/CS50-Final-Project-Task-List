@@ -103,7 +103,7 @@ namespace CS50TaskList.Controllers
         }
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> EditPost(TaskModel model)
+        public async System.Threading.Tasks.Task<ActionResult> Edit(TaskModel model)
         {
             if (model == null)
             {
