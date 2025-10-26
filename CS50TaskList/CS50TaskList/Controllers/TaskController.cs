@@ -65,17 +65,36 @@ namespace CS50TaskList.Controllers
         }
 
         // GET: Delete
-        public ActionResult Delete()
+        public ActionResult Delete(int id)
         {
-            return View();
+            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
+
+            if (task == null)
+            {
+                return View("Error");
+            }
+
+            TaskModel model = new TaskModel();
+            model.Id = task.Id;
+            model.Title = task.Title;
+            model.Notes = task.Notes;
+            model.Deadline = task.Deadline;
+            model.Recurrance = task.Recurrance;
+            model.Priority = task.Priority;
+            model.Position = task.Position;
+            model.IsCompleted = task.IsCompleted;
+            model.UserId = task.UserId;
+
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult Delete(int id)
+        public async System.Threading.Tasks.Task<ActionResult> Delete(TaskModel model)
         { 
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
+            var task = _context.Tasks.FirstOrDefault(x => x.Id == model.Id);
             _context.Tasks.Remove(task);
-            return View(); 
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home"); 
         }
 
         // GET: Edit

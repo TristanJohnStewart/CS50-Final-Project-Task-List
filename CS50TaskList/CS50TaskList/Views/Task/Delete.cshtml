@@ -13,7 +13,7 @@
                 <div class="mb-3">
                     <label asp-for="Title" class="form-label"></label>
 
-                    <input asp-for="Title" class="form-control" placeholder="Title" type="text" value="@Model.Title">
+                    <input asp-for="Title" class="form-control" disabled placeholder="Title" type="text" value="@Model.Title">
                 </div>
             </div>
 
@@ -23,7 +23,7 @@
                 <div class="mb-3">
                     <label asp-for="Notes" class="form-label"></label>
 
-                    <textarea asp-for="Notes" class="form-control" placeholder="Notes..." type="text" value="@Model.Notes"></textarea>
+                    <textarea asp-for="Notes" class="form-control" disabled placeholder="Notes..." type="text" value="@Model.Notes"></textarea>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <div class="mb-3">
                     <label asp-for="Deadline" for="startDate" class="form-label"></label>
 
-                    <input asp-for="Deadline" id="startDate" class="form-control" type="datetime-local" value="@Model.Deadline" />
+                    <input asp-for="Deadline" id="startDate" class="form-control" disabled type="datetime-local" value="@Model.Deadline" />
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
                 <div class="mb-3">
                     <label asp-for="Priority" class="form-label"></label>
 
-                    <select asp-for="Priority" aria-label="Priority select" class="form-select">
+                    <select asp-for="Priority" aria-label="Priority select" class="form-select" disabled>
                         @{
                             var priorities =
                             new List<CS50TaskList.Enums.PriorityType> {
@@ -75,7 +75,7 @@
                 <div class="mb-3">
                     <label asp-for="Recurrance" class="form-label"></label>
 
-                    <select asp-for="Recurrance" aria-label="Repeat select" class="form-select">
+                    <select asp-for="Recurrance" aria-label="Repeat select" class="form-select" disabled>
                         @{
                             var recurrances =
                             new List<CS50TaskList.Enums.RecurranceType> {
@@ -129,9 +129,9 @@
 
         <div class="row">
             <div class="col">
-                <button class="btn btn-primary" type="submit">Confirm Edit</button>
+                <button class="btn btn-danger" type="submit">Confirm Deletion</button>
 
-                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Edit" asp-controller="Task" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </div>
     </form>

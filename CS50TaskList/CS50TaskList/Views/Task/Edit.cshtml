@@ -132,6 +132,8 @@
                 <button class="btn btn-primary" type="submit">Confirm Edit</button>
 
                 <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+
+                <a asp-action="Delete" asp-controller="Task" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </form>
