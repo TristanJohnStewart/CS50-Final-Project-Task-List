@@ -1,122 +1,138 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Edit Task";
 }
+@model CS50TaskList.Models.TaskModel
 
 <h2>Edit Task</h2>
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <div class="mb-3">
-                <label for="titleInput" class="form-label">Title</label>
+    <form asp-action="EditPost" asp-controller="Task" method="post">
+        <input hidden asp-for="Id" value="@Model.Id"/>
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
 
-                <input type="text" class="form-control" id="titleInput" placeholder="Title">
-            </div>
-        </div>
-
-        <div class="w-100 d-none d-md-block"></div>
-
-        <div class="col">
-            <div class="mb-3">
-                <label for="notesInput" class="form-label">Notes</label>
-
-                <input type="text" class="form-control" id="notesInput" placeholder="Notes...">
-            </div>
-        </div>
-    </div>
-
-    @* <div class="row">
-
-    </div> *@
-
-    <div class="row">
-        <div class="col">
-            deadline selection here
-        </div>
-
-        <div class="col">
-            <div class="mb-3">
-                <label for="priorityInput" class="form-label">Priority</label>
-
-                <select class="form-select" id="priorityInput" aria-label="Default select example">
-                    <option selected>None</option>
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <div class="mb-3">
-                <label for="repeatInput" class="form-label">Repeat</label>
-
-                <select class="form-select" id="repeatInput" aria-label="Default select example">
-                    <option selected>None</option>
-                    <option value="1">Daily</option>
-                    <option value="2">Weekly</option>
-                    <option value="3">Monthly</option>
-                    <option value="4">Yearly</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <div class="mb-3">
-                <label for="subTaskInput" class="form-label">Sub-Tasks</label>
-
-                <div id="subTaskInput">
-                    @* all sub-tasks are listed in order with any new sub-tasks appended onto that list *@
-                    <div class="input-group mb-3">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">-</button>
-                        <input type="text" class="form-control" value="What ever the name of the sub-task is" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                    </div>
-                    <div class="input-group mb-3">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">+</button>
-                        <input type="text" class="form-control" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                    </div>
+                    <input asp-for="Title" class="form-control" placeholder="Title" type="text" value="@Model.Title">
                 </div>
+            </div>
 
+            <div class="w-100 d-lg-none d-md-block"></div>
+
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Notes" class="form-label"></label>
+
+                    <textarea asp-for="Notes" class="form-control" placeholder="Notes..." type="text" value="@Model.Notes"></textarea>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col">
-            <a class="btn btn-primary" href="#">Confirm</a> @* asp-controller="Task" asp-action="EditConfirm" *@
-            <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Cancel</a>
-            <a class="btn btn-danger" asp-controller="Task" asp-action="Delete">Delete</a>
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Deadline" for="startDate" class="form-label"></label>
+
+                    <input asp-for="Deadline" id="startDate" class="form-control" type="datetime-local" value="@Model.Deadline"/>
+                </div>
+            </div>
+
+            <div class="w-100 d-lg-none d-md-block"></div>
+
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Priority" class="form-label"></label>
+
+                    <select asp-for="Priority" aria-label="Priority select" class="form-select">
+                        @{
+                            var priorities = 
+                                new List<CS50TaskList.Enums.PriorityType> { 
+                                    CS50TaskList.Enums.PriorityType.None,
+                                    CS50TaskList.Enums.PriorityType.Low,
+                                    CS50TaskList.Enums.PriorityType.Medium,
+                                    CS50TaskList.Enums.PriorityType.High
+                                };
+
+                            foreach (CS50TaskList.Enums.PriorityType priority in priorities)
+                            {
+                                if (Model.Priority == priority)
+                                {
+                                    <option selected value="@priority">@priority.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option value="@priority">@priority.ToString()</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="w-100 d-lg-none d-md-block"></div>
+
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Recurrance" class="form-label"></label>
+
+                    <select asp-for="Recurrance" aria-label="Repeat select" class="form-select">
+                        @{
+                            var recurrances =
+                                new List<CS50TaskList.Enums.RecurranceType> { 
+                                    CS50TaskList.Enums.RecurranceType.None,
+                                    CS50TaskList.Enums.RecurranceType.Daily,
+                                    CS50TaskList.Enums.RecurranceType.Weekly,
+                                    CS50TaskList.Enums.RecurranceType.Monthly,
+                                    CS50TaskList.Enums.RecurranceType.Yearly
+                                };
+
+                            foreach (CS50TaskList.Enums.RecurranceType recurrance in recurrances)
+                            {
+                                if (Model.Recurrance == recurrance)
+                                {
+                                    <option selected value="@recurrance">@recurrance.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option value="@recurrance">@recurrance.ToString()</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div class="row">
+            <div class="col">
+                <label asp-for="SubTasks" class="form-label">Sub-Tasks</label>
+
+                @* <div id="subTaskContainer">
+                    @if (Model.SubTasks != null)
+                    {
+                        for (int i = 0; i < Model.SubTasks.Count; i++)
+                        {
+                            <div class="input-group mb-3">
+                                <button class="btn btn-outline-secondary" type="button">-</button>
+                                <input asp-for="SubTasks[i].Title" class="form-control" placeholder="Subtask Title" type="text" value="">
+                            </div>
+                        }
+                    }
+                </div> *@
+                @* <a asp-action="CreateSubTask" asp-controller="Task" class="btn btn-secondary">Create Sub-Task</a> *@
+                <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary" id="addSubTask" type="button">+</button>
+                    <input class="form-control" id="addSubTaskTitle" placeholder="Subtask Title" type="text" value="">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" type="submit">Confirm Edit</button>
+
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </form>
 </div>
-
-@*
-    Title:
-    Input Box
-
-    Notes:
-    Input Box
-
-    Deadline:
-    Calendar Selection
-
-    Sub-Tasks:
-    Add Sub-Task Button
-    +--------------------------------------------------------------+
-    | Sub-Task Title / Input Box | Delete Sub-Task "-" or "Delete" |
-    +--------------------------------------------------------------+
-    (Add sub-task button should be replaced by a new sub-task list entry with input box and delete buttons,
-    then get redrawn at the bottom of the list)
-
-    Repeat:
-    Drop Down Menu with list of repeat types
-
-    Priority:
-    Drop Down Menu
-
-    Save Button | Cancel Button
-*@
