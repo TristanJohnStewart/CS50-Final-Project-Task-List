@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Create Subtask";
+}
+@model CS50TaskList.Models.SubTaskModel
+
+<h2>Create Task</h2>
+
+<div class="container">
+    <form asp-action="Create" asp-controller="Subtask" method="post">
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+
+                    <input asp-for="Title" class="form-control" placeholder="Title" type="text">
+                </div>
+            </div>
+        </div>
+
+        <input asp-for="ParentId" hidden type="number" value="@Model.ParentId" />
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" type="submit">Create Subtask</button>
+
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
