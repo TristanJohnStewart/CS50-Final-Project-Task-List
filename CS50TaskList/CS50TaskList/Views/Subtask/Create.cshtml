@@ -3,10 +3,12 @@
 }
 @model CS50TaskList.Models.SubTaskModel
 
-<h2>Create Task</h2>
+<h2>Create Subtask</h2>
 
 <div class="container">
     <form asp-action="Create" asp-controller="Subtask" method="post">
+        <input asp-for="ParentId" hidden type="number" value="@Model.ParentId" />
+
         <div class="row">
             <div class="col">
                 <div class="mb-3">
@@ -16,8 +18,6 @@
                 </div>
             </div>
         </div>
-
-        <input asp-for="ParentId" hidden type="number" value="@Model.ParentId" />
 
         <div class="row">
             <div class="col">

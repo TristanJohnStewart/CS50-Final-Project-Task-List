@@ -47,43 +47,87 @@ namespace CS50TaskList.Controllers
         // GET: SubtaskController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var entity = _context.SubTasks.FirstOrDefault(x => x.Id == id);
+
+            if (entity == null)
+            {
+                return View("Error");
+            }
+
+            var model = new SubTaskModel
+            {
+                Id = id,
+                Title = entity.Title,
+                Position = entity.Position,
+                IsCompleted = entity.IsCompleted,
+                ParentId = entity.TaskId
+            };
+
+            return View(model);
         }
 
         // POST: SubtaskController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
+        public async System.Threading.Tasks.Task<ActionResult> Edit(SubTaskModel model)
+        {   
+            if (model == null || !ModelState.IsValid)
+            {
+                return View("Error");
+            }
+
             try
             {
-                return RedirectToAction();
+                var entity = _context.SubTasks.FirstOrDefault(x => x.Id == model.Id);
+                entity.Id = model.Id;
+                entity.Title = model.Title;
+                entity.Position = model.Position;
+                entity.IsCompleted = model.IsCompleted;
+                entity.TaskId = model.ParentId;
+                entity.Task = _context.Tasks.FirstOrDefault(x => x.Id == model.ParentId);
+
+                _context.Update(entity);
+                await _context.SaveChangesAsync();
             }
-            catch
+            catch (DbUpdateConcurrencyException)
             {
-                return View();
+                return View("Error");
             }
+
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: SubtaskController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var entity = _context.SubTasks.FirstOrDefault(x => x.Id == id);
+
+            if (entity == null)
+            {
+                return View("Error");
+            }
+
+            var model = new SubTaskModel
+            {
+                Id = id,
+                Title = entity.Title,
+                Position = entity.Position,
+                IsCompleted = entity.IsCompleted,
+                ParentId = entity.TaskId
+            };
+
+            return View(model);
         }
 
         // POST: SubtaskController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async System.Threading.Tasks.Task<ActionResult> Delete(SubTaskModel model)
         {
-            try
-            {
-                return RedirectToAction();
-            }
-            catch
-            {
-                return View();
-            }
+            var entity = _context.SubTasks.FirstOrDefault(x => x.Id == model.Id);
+            _context.SubTasks.Remove(entity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

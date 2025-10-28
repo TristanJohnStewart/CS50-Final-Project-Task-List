@@ -1,13 +1,14 @@
 ﻿@{
-    ViewData["Title"] = "Delete Task";
+    ViewData["Title"] = "Edit Subtask";
 }
-@model CS50TaskList.Models.TaskModel
+@model CS50TaskList.Models.SubTaskModel
 
-<h2>Delete Task</h2>
+<h2>Delete Subtask</h2>
 
 <div class="container">
-    <form asp-action="Delete" asp-controller="Task" method="post">
-        <input hidden asp-for="Id" value="@Model.Id" />
+    <form asp-action="Delete" asp-controller="Subtask" method="post">
+        <input asp-for="ParentId" hidden type="number" value="@Model.ParentId" />
+
         <div class="row">
             <div class="col">
                 <div class="mb-3">
@@ -16,142 +17,14 @@
                     <input asp-for="Title" class="form-control" disabled placeholder="Title" type="text" value="@Model.Title">
                 </div>
             </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Notes" class="form-label"></label>
-
-                    <textarea asp-for="Notes" class="form-control" disabled placeholder="Notes..." type="text" value="@Model.Notes"></textarea>
-                </div>
-            </div>
         </div>
 
         <div class="row">
             <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Deadline" for="startDate" class="form-label"></label>
+                <button class="btn btn-danger" type="submit">Confirm Delete</button>
 
-                    <input asp-for="Deadline" id="startDate" class="form-control" disabled type="datetime-local" value="@Model.Deadline" />
-                </div>
-            </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Priority" class="form-label"></label>
-
-                    <select asp-for="Priority" aria-label="Priority select" class="form-select" disabled>
-                        @{
-                            var priorities =
-                            new List<CS50TaskList.Enums.PriorityType> {
-                        CS50TaskList.Enums.PriorityType.None,
-                        CS50TaskList.Enums.PriorityType.Low,
-                        CS50TaskList.Enums.PriorityType.Medium,
-                        CS50TaskList.Enums.PriorityType.High
-            };
-
-                            foreach (CS50TaskList.Enums.PriorityType priority in priorities)
-                            {
-                                if (Model.Priority == priority)
-                                {
-                                    <option selected value="@priority">@priority.ToString()</option>
-                                }
-                                else
-                                {
-                                    <option value="@priority">@priority.ToString()</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Recurrance" class="form-label"></label>
-
-                    <select asp-for="Recurrance" aria-label="Repeat select" class="form-select" disabled>
-                        @{
-                            var recurrances =
-                            new List<CS50TaskList.Enums.RecurranceType> {
-                        CS50TaskList.Enums.RecurranceType.None,
-                        CS50TaskList.Enums.RecurranceType.Daily,
-                        CS50TaskList.Enums.RecurranceType.Weekly,
-                        CS50TaskList.Enums.RecurranceType.Monthly,
-                        CS50TaskList.Enums.RecurranceType.Yearly
-            };
-
-                            foreach (CS50TaskList.Enums.RecurranceType recurrance in recurrances)
-                            {
-                                if (Model.Recurrance == recurrance)
-                                {
-                                    <option selected value="@recurrance">@recurrance.ToString()</option>
-                                }
-                                else
-                                {
-                                    <option value="@recurrance">@recurrance.ToString()</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label asp-for="SubTasks" class="form-label">Sub-Tasks</label>
-
-                @* <div id="subTaskContainer">
-                    @if (Model.SubTasks != null)
-                    {
-                        for (int i = 0; i < Model.SubTasks.Count; i++)
-                        {
-                            <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary" type="button">-</button>
-                                <input asp-for="SubTasks[i].Title" class="form-control" placeholder="Subtask Title" type="text" value="">
-                            </div>
-                        }
-                    }
-                </div> *@
-                @* <a asp-action="CreateSubTask" asp-controller="Task" class="btn btn-secondary">Create Sub-Task</a> *@
-                <div class="input-group mb-3">
-                    <button class="btn btn-outline-secondary" id="addSubTask" type="button">+</button>
-                    <input class="form-control" id="addSubTaskTitle" placeholder="Subtask Title" type="text" value="">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-danger" type="submit">Confirm Deletion</button>
-
-                <a asp-action="Edit" asp-controller="Task" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </div>
     </form>
 </div>
-
-@*
-    Title
-
-    Notes
-
-    Deadline
-
-    Sub-Tasks:
-    +--------------------------------------------------------------+
-    | Sub-Task Title / Input Box | Delete Sub-Task "-" or "Delete" |
-    +--------------------------------------------------------------+
-
-    Repeat Type
-
-    Priority Type
-
-    Delete Button | Cancel Button
-*@

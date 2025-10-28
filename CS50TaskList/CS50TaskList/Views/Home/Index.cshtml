@@ -72,7 +72,7 @@
 
                             <div class="row">
                                 <div class="col">
-                                    <a asp-action="Create" asp-controller="Subtask" asp-route-id="@task.Id" class="btn btn-outline-secondary btn-sm">Create Subtask</a>
+                                    <a asp-action="Create" asp-controller="Subtask" asp-route-id="@task.Id" class="btn btn-outline-primary btn-sm">Create Subtask</a>
                                     <ul class="list-group">
                                         @if (task.SubTasks != null)
                                         {
@@ -81,6 +81,9 @@
                                                 <li class="list-group-item">
                                                     <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
                                                     <label class="form-check-label" for="firstCheckbox">@subTask.Title</label>
+                                                    <div class="float-end">
+                                                        <a asp-action="Edit" asp-controller="SubTask" asp-route-id="@subTask.Id" class="btn btn-outline-secondary btn-sm">Edit</a>
+                                                    </div>
                                                 </li>
                                             }
                                         }
