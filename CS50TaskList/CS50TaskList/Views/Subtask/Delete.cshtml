@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Edit Subtask";
+}
+@model CS50TaskList.Models.SubTaskModel
+
+<h2>Delete Subtask</h2>
+
+<div class="container">
+    <form asp-action="Delete" asp-controller="Subtask" method="post">
+        <input asp-for="ParentId" hidden type="number" value="@Model.ParentId" />
+
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+
+                    <input asp-for="Title" class="form-control" disabled placeholder="Title" type="text" value="@Model.Title">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-danger" type="submit">Confirm Delete</button>
+
+                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

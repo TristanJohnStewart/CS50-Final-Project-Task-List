@@ -46,6 +46,26 @@ namespace CS50TaskList.Controllers
                 item.IsCompleted = task.IsCompleted;
                 item.UserId = task.UserId;
 
+                var subtasks = await _context.SubTasks.Where(x => x.TaskId == item.Id).ToListAsync();
+
+                if (subtasks != null)
+                {
+                    var subModel = new List<SubTaskModel>();
+                    foreach (var subtask in subtasks)
+                    {
+                        var subItem = new SubTaskModel {
+                            Id = subtask.Id,
+                            Title = subtask.Title,
+                            Position = subtask.Position,
+                            IsCompleted = subtask.IsCompleted,
+                            ParentId = subtask.TaskId
+                        };
+
+                        subModel.Add(subItem);
+                    }
+                    item.SubTasks = subModel;
+                }
+                
                 model.Add(item);
             }
 
