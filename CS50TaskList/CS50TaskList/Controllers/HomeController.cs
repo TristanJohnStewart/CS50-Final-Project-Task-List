@@ -1,9 +1,6 @@
 using CS50TaskList.Data;
 using CS50TaskList.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Mvc.Razor.Compilation;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -15,38 +12,45 @@ namespace CS50TaskList.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-        //public HomeController(ILogger<HomeController> logger) { _logger = logger; }
-
         private readonly ApplicationDbContext _context;
-        public HomeController(ApplicationDbContext context) { _context = context; }
+        private readonly ILogger<HomeController> _logger;
+        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger) 
+        { 
+            _context = context; 
+            _logger = logger; 
+        }
         
-        public async System.Threading.Tasks.Task<ActionResult> Index() 
+        public async Task<ActionResult> Index() 
         {
+            _logger.Log(LogLevel.Information, "Entering the Index action");
+
             var tasks = await _context.Tasks.ToListAsync();
 
             if (tasks == null)
             {
-                View();
+                return View();
             }
 
             var model = new List<TaskModel>();
 
             foreach (var task in tasks)
             {
-                var item = new TaskModel();
+                var item = new TaskModel
+                {
+                    Id = task.Id,
+                    Title = task.Title,
+                    Notes = task.Notes,
+                    Deadline = task.Deadline,
+                    Recurrance = task.Recurrance,
+                    Priority = task.Priority,
+                    Position = task.Position,
+                    IsCompleted = task.IsCompleted,
+                    UserId = task.UserId
+                };
 
-                item.Id = task.Id;
-                item.Title = task.Title;
-                item.Notes = task.Notes;
-                item.Deadline = task.Deadline;
-                item.Recurrance = task.Recurrance;
-                item.Priority = task.Priority;
-                item.Position = task.Position;
-                item.IsCompleted = task.IsCompleted;
-                item.UserId = task.UserId;
-
-                var subtasks = await _context.SubTasks.Where(x => x.TaskId == item.Id).ToListAsync();
+                var subtasks = await _context.SubTasks
+                    .Where(x => x.TaskId == item.Id)
+                    .ToListAsync();
 
                 if (subtasks != null)
                 {
@@ -69,6 +73,7 @@ namespace CS50TaskList.Controllers
                 model.Add(item);
             }
 
+            _logger.Log(LogLevel.Information, "Returning {model} to Index view", model);
             return View(model);
         }
 

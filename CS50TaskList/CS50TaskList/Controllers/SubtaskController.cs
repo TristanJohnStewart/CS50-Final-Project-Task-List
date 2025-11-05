@@ -1,9 +1,9 @@
 ﻿using CS50TaskList.Data;
 using CS50TaskList.Data.Entities;
 using CS50TaskList.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 namespace CS50TaskList.Controllers
@@ -26,7 +26,7 @@ namespace CS50TaskList.Controllers
         [ValidateAntiForgeryToken]
         public async System.Threading.Tasks.Task<ActionResult> Create(SubTaskModel model)
         {
-            if (model == null || !ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View("Error");
             }
@@ -34,11 +34,10 @@ namespace CS50TaskList.Controllers
             SubTask entity = new SubTask
             {
                 Title = model.Title,
-                TaskId = model.ParentId,
-                Task = _context.Tasks.FirstOrDefault(x => x.Id == model.ParentId)
+                TaskId = model.ParentId
             };
 
-            _context.Add(entity);
+            await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
@@ -71,7 +70,7 @@ namespace CS50TaskList.Controllers
         [ValidateAntiForgeryToken]
         public async System.Threading.Tasks.Task<ActionResult> Edit(SubTaskModel model)
         {   
-            if (model == null || !ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View("Error");
             }
@@ -84,12 +83,11 @@ namespace CS50TaskList.Controllers
                 entity.Position = model.Position;
                 entity.IsCompleted = model.IsCompleted;
                 entity.TaskId = model.ParentId;
-                entity.Task = _context.Tasks.FirstOrDefault(x => x.Id == model.ParentId);
 
                 _context.Update(entity);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 return View("Error");
             }

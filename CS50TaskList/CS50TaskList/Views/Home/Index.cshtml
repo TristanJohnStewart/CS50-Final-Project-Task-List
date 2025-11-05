@@ -34,11 +34,11 @@
             foreach (TaskModel task in Model)
             {
                 <li class="list-group-item">
-                    <div hidden id="title">@task.Title</div>
+                    <div hidden id="taskId">@task.Id</div>
 
                     <div class="row align-items-center">
                         <div class="col-1 d-flex justify-content-center">
-                            <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+                            <input class="form-check-input me-1" type="checkbox" id="firstCheckbox" onchange="">
                         </div>
 
                         <div class="col">
@@ -99,60 +99,16 @@
 </div> 
 
 <script>
-    function sortList(criteria) {
-        var direction = "asc", 
-            isSwitching = true,
-            list = document.getElementById("taskList"),
-            switchCount = 0;
-
-        while (isSwitching == false) {
-            isSwitching = false;
-            var items = list.getElementsByTagName("LI");
-
-            for (var i = 0; i < (items.length - 1); i++) {
-                var shouldSwitch = false,
-                    itemOne = items[i].innerHTML.getElementById(criteria),
-                    itemTwo = items[i + 1].innerHTML.getElementById(criteria);
-
-                if (criteria == "title") {
-                    itemOne = itemOne.innerHTML.toLowerCase();
-                    itemTwo = itemTwo.innerHTML.toLowerCase();
-                }
-
-                if (direction == "asc") {
-                    if (directionCheck(itemOne, itemTwo) == true) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                }
-                else if (direction == "desc") {
-                    if (directionCheck(itemTwo, itemOne) == true) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                }
-            }
-
-            if (shouldSwitch == true) {
-                b[i].parentNode.insertBefore(b[i + 1], b[i]);
-                switching = true;
-                switchCount++;
-            }
-            else {
-                if (switchCount == 0 && direction == "asc") {
-                    direction = "desc";
-                    isSwitching = true;
-                }
-            }
-        }
-    }
-
-    function directionCheck(a, b) {
-        if (a > b) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+    document.getElementById("firstCheckbox").addEventListener("change", async (e) => {
+        console.log("Entered Method");
+        const isCompleted = e.target.checked;
+        const id = 1;
+        //const formData = new FormData();
+        //formData.append("id", id);
+        //formData.append("isCompleted", isCompleted);
+        await fetch("Task/SetToComplete/", {
+            method:"POST",
+            body: JSON.stringify({id, isCompleted})
+        });
+    })
 </script>
