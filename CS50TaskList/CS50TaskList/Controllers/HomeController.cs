@@ -1,80 +1,33 @@
-using CS50TaskList.Data;
+using CS50TaskList.Data.Entities;
 using CS50TaskList.Models;
+using CS50TaskList.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CS50TaskList.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<HomeController> _logger;
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger) 
-        { 
-            _context = context; 
-            _logger = logger; 
-        }
-        
-        public async Task<ActionResult> Index() 
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IRepository<Data.Entities.Task> _taskRepository;
+        private readonly IRepository<SubTask> _subTaskRepository;
+        public HomeController(ILogger<HomeController> logger, UserManager<IdentityUser> userManager, IRepository<Data.Entities.Task> taskRepository, IRepository<SubTask> subTaskRepository)
         {
-            _logger.Log(LogLevel.Information, "Entering the Index action");
+            _logger = logger;
+            _userManager = userManager;
+            _taskRepository = taskRepository;
+            _subTaskRepository = subTaskRepository;
+        }
 
-            var tasks = await _context.Tasks.ToListAsync();
-
-            if (tasks == null)
-            {
-                return View();
-            }
-
-            var model = new List<TaskModel>();
-
-            foreach (var task in tasks)
-            {
-                var item = new TaskModel
-                {
-                    Id = task.Id,
-                    Title = task.Title,
-                    Notes = task.Notes,
-                    Deadline = task.Deadline,
-                    Recurrance = task.Recurrance,
-                    Priority = task.Priority,
-                    Position = task.Position,
-                    IsCompleted = task.IsCompleted,
-                    UserId = task.UserId
-                };
-
-                var subtasks = await _context.SubTasks
-                    .Where(x => x.TaskId == item.Id)
-                    .ToListAsync();
-
-                if (subtasks != null)
-                {
-                    var subModel = new List<SubTaskModel>();
-                    foreach (var subtask in subtasks)
-                    {
-                        var subItem = new SubTaskModel {
-                            Id = subtask.Id,
-                            Title = subtask.Title,
-                            Position = subtask.Position,
-                            IsCompleted = subtask.IsCompleted,
-                            ParentId = subtask.TaskId
-                        };
-
-                        subModel.Add(subItem);
-                    }
-                    item.SubTasks = subModel;
-                }
-                
-                model.Add(item);
-            }
-
-            _logger.Log(LogLevel.Information, "Returning {model} to Index view", model);
-            return View(model);
+        public async Task<ActionResult> Index()
+        {
+            return (User.Identity.IsAuthenticated) ? RedirectToAction("Index", "Task") : View();
+            //_logger.Log(LogLevel.Information, "Returning {model} to Index view", model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

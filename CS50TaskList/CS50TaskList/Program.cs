@@ -1,4 +1,6 @@
 using CS50TaskList.Data;
+using CS50TaskList.Repositories;
+using CS50TaskList.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,12 @@ namespace CS50TaskList
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped(typeof(ITaskService), typeof(TaskService));
+            builder.Services.AddScoped(typeof(ISubTaskService), typeof(SubTaskService));
 
             var app = builder.Build();
 

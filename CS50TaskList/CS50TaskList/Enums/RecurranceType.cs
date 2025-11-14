@@ -4,7 +4,7 @@
     {
         None,
         Daily,
-        Weekly, 
+        Weekly,
         Monthly,
         Yearly,
     }

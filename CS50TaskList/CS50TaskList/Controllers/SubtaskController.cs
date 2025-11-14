@@ -1,17 +1,19 @@
-﻿using CS50TaskList.Data;
-using CS50TaskList.Data.Entities;
-using CS50TaskList.Models;
+﻿using CS50TaskList.Models;
+using CS50TaskList.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace CS50TaskList.Controllers
 {
+    [Authorize]
     public class SubtaskController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public SubtaskController(ApplicationDbContext context) { _context = context; }
+        private readonly ISubTaskService _subTaskService;
+        public SubtaskController(ISubTaskService subTaskService)
+        {
+            _subTaskService = subTaskService;
+        }
 
         // GET: SubtaskController/Create
         public ActionResult Create(int id)
@@ -24,43 +26,22 @@ namespace CS50TaskList.Controllers
         // POST: SubtaskController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async System.Threading.Tasks.Task<ActionResult> Create(SubTaskModel model)
+        public async Task<ActionResult> Create(SubTaskModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("Error");
             }
 
-            SubTask entity = new SubTask
-            {
-                Title = model.Title,
-                TaskId = model.ParentId
-            };
-
-            await _context.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _subTaskService.CreateSubTaskAsync(model);
 
             return RedirectToAction("Index", "Home");
         }
 
         // GET: SubtaskController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var entity = _context.SubTasks.FirstOrDefault(x => x.Id == id);
-
-            if (entity == null)
-            {
-                return View("Error");
-            }
-
-            var model = new SubTaskModel
-            {
-                Id = id,
-                Title = entity.Title,
-                Position = entity.Position,
-                IsCompleted = entity.IsCompleted,
-                ParentId = entity.TaskId
-            };
+            var model = await _subTaskService.PrepareForEditAsync(id);
 
             return View(model);
         }
@@ -68,51 +49,22 @@ namespace CS50TaskList.Controllers
         // POST: SubtaskController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async System.Threading.Tasks.Task<ActionResult> Edit(SubTaskModel model)
-        {   
+        public async Task<ActionResult> Edit(SubTaskModel model)
+        {
             if (!ModelState.IsValid)
             {
                 return View("Error");
             }
 
-            try
-            {
-                var entity = _context.SubTasks.FirstOrDefault(x => x.Id == model.Id);
-                entity.Id = model.Id;
-                entity.Title = model.Title;
-                entity.Position = model.Position;
-                entity.IsCompleted = model.IsCompleted;
-                entity.TaskId = model.ParentId;
-
-                _context.Update(entity);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                return View("Error");
-            }
+            await _subTaskService.EditSubTaskAsync(model);
 
             return RedirectToAction("Index", "Home");
         }
 
         // GET: SubtaskController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var entity = _context.SubTasks.FirstOrDefault(x => x.Id == id);
-
-            if (entity == null)
-            {
-                return View("Error");
-            }
-
-            var model = new SubTaskModel
-            {
-                Id = id,
-                Title = entity.Title,
-                Position = entity.Position,
-                IsCompleted = entity.IsCompleted,
-                ParentId = entity.TaskId
-            };
+            var model = await _subTaskService.PrepareForDeleteAsync(id);
 
             return View(model);
         }
@@ -122,9 +74,8 @@ namespace CS50TaskList.Controllers
         [ValidateAntiForgeryToken]
         public async System.Threading.Tasks.Task<ActionResult> Delete(SubTaskModel model)
         {
-            var entity = _context.SubTasks.FirstOrDefault(x => x.Id == model.Id);
-            _context.SubTasks.Remove(entity);
-            await _context.SaveChangesAsync();
+            await _subTaskService.DeleteSubTaskAsync(model);
+
             return RedirectToAction("Index", "Home");
         }
     }

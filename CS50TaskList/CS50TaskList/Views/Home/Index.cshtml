@@ -3,112 +3,26 @@
 }
 @model List<CS50TaskList.Models.TaskModel>
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <a asp-action="Create" asp-controller="Task" class="btn btn-primary">Create Task</a>
-        </div>
+<section class="hero">
+    <div class="container">
+        <h1>Hello, CS50!</h1>
 
-        <div class="col">
-            <div class="dropdown">
-                <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">Sort By</button>
+        <p class="lead mb-4">
+            Welcome to my Final Project for <strong>HarvardX's CS50</strong> — an intuitive To-Do List web app designed to help you stay organized and on top of your daily tasks.
+        </p>
 
-                <ul class="dropdown-menu">
-                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">None</a></li>
-                    <li class="dropdown-item" onclick="sortList()">Title</li>
-                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Title - Ascending</a></li>
-                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Deadline - Descending</a></li>
-                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Deadline - Ascending</a></li>
-                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Priority - Descending</a></li>
-                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Priority - Ascending</a></li>
-                </ul>
-            </div>
-        </div>
+        <p>To begin, click the register or login buttons in the top right to create an 'account' begin organising your chores and tasks!</p>
+
+        <!-- About Section -->
+        <h2 class="fw-bold mb-3">About This Project</h2>
+
+        <p class="mb-5">
+            This project was created as part of HarvardX's <em>CS50's Introduction to Computer Science</em> course. The goal was to develop a functional piece of software using any languages or frameworks of our choice.
+            Built using modern web technologies and hosted as if it were deployed to the cloud with services like <strong>Azure</strong> or <strong>AWS</strong>.
+            The app simulates a realistic user experience — from registration and login to managing personal to-do items — all while demonstrating concepts like authentication, CRUD operations, and responsive UI design.
+        </p>
+
+        <p class="fst-italic text-secondary"> Please note: this demo is for educational purposes only — no real data is stored or transmitted. </p>
     </div>
-</div>
+</section>
 
-<div class="container">
-    <ul class="list-group" id="taskList">
-        @if (Model != null)
-        {
-            foreach (TaskModel task in Model)
-            {
-                <li class="list-group-item">
-                    <div hidden id="taskId">@task.Id</div>
-
-                    <div class="row align-items-center">
-                        <div class="col-1 d-flex justify-content-center">
-                            <input class="form-check-input me-1" type="checkbox" id="firstCheckbox" onchange="">
-                        </div>
-
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <h5 class="mb-1">@task.Title</h5>
-                                </div>
-
-                                <div class="col">
-                                    <div class="float-end">
-                                        <a asp-action="Edit" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-outline-secondary">Edit</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <small><b>Priority: </b>@task.Priority.ToString()</small>
-                                </div>
-
-                                <div class="col">
-                                    <small><b>Deadline: </b>@task.Deadline.ToString()</small>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <p class="mb-1">@task.Notes</p>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col">
-                                    <a asp-action="Create" asp-controller="Subtask" asp-route-id="@task.Id" class="btn btn-outline-primary btn-sm">Create Subtask</a>
-                                    <ul class="list-group">
-                                        @if (task.SubTasks != null)
-                                        {
-                                            @foreach (SubTaskModel subTask in task.SubTasks)
-                                            {
-                                                <li class="list-group-item">
-                                                    <input class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
-                                                    <label class="form-check-label" for="firstCheckbox">@subTask.Title</label>
-                                                    <div class="float-end">
-                                                        <a asp-action="Edit" asp-controller="SubTask" asp-route-id="@subTask.Id" class="btn btn-outline-secondary btn-sm">Edit</a>
-                                                    </div>
-                                                </li>
-                                            }
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            }
-        }
-    </ul>
-</div> 
-
-<script>
-    document.getElementById("firstCheckbox").addEventListener("change", async (e) => {
-        console.log("Entered Method");
-        const isCompleted = e.target.checked;
-        const id = 1;
-        const formData = new FormData();
-        formData.append("id", id);
-        formData.append("isCompleted", isCompleted);
-        await fetch("Task/SetToComplete/", {
-            method:"POST",
-            body: formData
-        });
-    })
-</script>

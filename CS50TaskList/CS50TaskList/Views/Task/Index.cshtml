@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "View Tasks";
+}
+@model List<CS50TaskList.Models.TaskModel>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <a asp-action="Create" asp-controller="Task" class="btn btn-primary">Create Task</a>
+        </div>
+
+        @* still needs to be worked on  *@
+        <div class="col">
+            <div class="dropdown">
+                <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">Sort By</button>
+
+                <ul class="dropdown-menu">
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">None</a></li>
+                    <li class="dropdown-item" onclick="sortList()">Title</li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Title - Ascending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Deadline - Descending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Deadline - Ascending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Priority - Descending</a></li>
+                    <li><a asp-action="Index" asp-controller="Home" class="dropdown-item">Priority - Ascending</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <ul class="list-group" id="taskList">
+        @if (Model != null)
+        {
+            foreach (TaskModel task in Model)
+            {
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-1 d-flex justify-content-center">
+                            <input class="form-check-input me-1" type="checkbox" id="checkBox" onchange="" value="@task.IsCompleted"> @* need to get the id's working *@
+
+                            <div hidden id="taskId">@task.Id</div>  @* don't think this is needed *@
+                        </div>
+
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="mb-1">@task.Title</h5>
+                                </div>
+
+                                <div class="col">
+                                    <div class="float-end">
+                                        <a asp-action="Edit" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-outline-secondary">Edit</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <small><b>Priority: </b>@task.Priority.ToString()</small>
+                                </div>
+
+                                <div class="col">
+                                    <small><b>Deadline: </b>@task.Deadline.ToString()</small>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <p class="mb-1">@task.Notes</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <a asp-action="Create" asp-controller="Subtask" asp-route-id="@task.Id" class="btn btn-outline-primary btn-sm">Create Subtask</a>
+                                    <ul class="list-group">
+                                        @if (task.SubTasks != null)
+                                        {
+                                            @foreach (SubTaskModel subTask in task.SubTasks)
+                                            {
+                                                <li class="list-group-item">
+                                                    <input class="form-check-input me-1" type="checkbox" id="checkBox" onchange="" value="@subTask.IsCompleted"> @* need to get the id's working *@
+                                                    <label class="form-check-label" for="firstCheckbox">@subTask.Title</label>
+                                                    <div class="float-end">
+                                                        <a asp-action="Edit" asp-controller="SubTask" asp-route-id="@subTask.Id" class="btn btn-outline-secondary btn-sm">Edit</a>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+
+<script>
+    document.getElementById("checkBox").addEventListener("change", async (e) => {
+        console.log("Entered Method");
+        const isCompleted = e.target.checked;
+        // const id = 1;
+        const id = document.getElementById("taskId").value;
+        const formData = new FormData();
+        formData.append("id", id);
+        formData.append("isCompleted", isCompleted);
+        await fetch("Task/SetToComplete/", {
+            method:"POST",
+            body: formData
+        });
+    })
+</script>

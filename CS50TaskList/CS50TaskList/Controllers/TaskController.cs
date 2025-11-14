@@ -1,27 +1,39 @@
-﻿using CS50TaskList.Data;
+﻿using CS50TaskList.Data.Entities;
 using CS50TaskList.Models;
+using CS50TaskList.Repositories;
+using CS50TaskList.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace CS50TaskList.Controllers
 {
+    [Authorize]
     public class TaskController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public TaskController(ApplicationDbContext context) { _context = context; }
+        private readonly ITaskService _taskService;
+        public TaskController(ITaskService taskService)
+        {
+            _taskService = taskService;
+        }
+
+        public async Task<IActionResult> IndexAsync()
+        {
+            var model = await _taskService.PrepareForIndexAsync();
+            // _logger.Log(LogLevel.Information, "Returning {model} to Index view", model);
+            return View(model);
+        }
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> SetToComplete([FromForm]int id, [FromForm]bool isCompleted) 
+        public async System.Threading.Tasks.Task<ActionResult> SetToComplete([FromForm] int id, [FromForm] bool isCompleted)
         {
-            var entity = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
-
-            entity.IsCompleted = isCompleted;
-
-            return Ok();
+            await _taskService.CompleteTaskAsync(id, isCompleted);
+            return RedirectToAction("Index", "Home");
         }
+
         // GET: Create
         public ActionResult Create()
         {
@@ -29,90 +41,58 @@ namespace CS50TaskList.Controllers
         }
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> CreateAsync(TaskModel model)
+        public async System.Threading.Tasks.Task<ActionResult> Create(TaskModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("Error");
             }
 
-            Data.Entities.Task entity = new Data.Entities.Task
+            try
             {
-                Id = model.Id,
-                Title = model.Title,
-                Notes = model.Notes,
-                Deadline = model.Deadline,
-                Recurrance = model.Recurrance,
-                Priority = model.Priority,
-                Position = model.Position,
-                IsCompleted = model.IsCompleted,
-                UserId = model.UserId
-            };
+                await _taskService.CreateTaskAsync(model);
+            }
+            catch (Exception ex) { return View("Error", ex); }
 
-            await _context.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
 
         // GET: Delete
-        public ActionResult Delete(int id)
+        public async System.Threading.Tasks.Task<ActionResult> Delete(int id)
         {
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
-
-            if (task == null)
+            try
             {
-                return View("Error");
+                var model = _taskService.PrepareForDeleteAsync(id);
+                return View(model);
             }
-
-            TaskModel model = new TaskModel
-            {
-                Id = task.Id,
-                Title = task.Title,
-                Notes = task.Notes,
-                Deadline = task.Deadline,
-                Recurrance = task.Recurrance,
-                Priority = task.Priority,
-                Position = task.Position,
-                IsCompleted = task.IsCompleted,
-                UserId = task.UserId
-            };
-
-            return View(model);
+            catch (Exception ex) { return View("Error", ex); }
         }
 
         [HttpPost]
         public async System.Threading.Tasks.Task<ActionResult> Delete(TaskModel model)
-        { 
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == model.Id);
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home"); 
-        }
-
-        // GET: Edit
-        public ActionResult Edit(int id)
         {
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
-
-            if (task == null)
+            if (!ModelState.IsValid)
             {
                 return View("Error");
             }
 
-            TaskModel model = new TaskModel
+            try
             {
-                Id = task.Id,
-                Title = task.Title,
-                Notes = task.Notes,
-                Deadline = task.Deadline,
-                Recurrance = task.Recurrance,
-                Priority = task.Priority,
-                Position = task.Position,
-                IsCompleted = task.IsCompleted,
-                UserId = task.UserId
-            };
+                await _taskService.DeleteTaskAsync(model);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex) { return View("Error", ex); }
+        }
 
-            return View(model);
+        // GET: Edit
+        public async System.Threading.Tasks.Task<ActionResult> Edit(int id)
+        {
+            try
+            {
+                var model = await _taskService.PrepareForEditAsync(id);
+                return View(model);
+            }
+            catch (Exception ex) { return View("Error", ex); }
         }
 
         [HttpPost]
@@ -123,28 +103,15 @@ namespace CS50TaskList.Controllers
                 return View("Error");
             }
 
-
             try
             {
-                var entity = _context.Tasks.FirstOrDefault(x => x.Id == model.Id);
-                entity.Title = model.Title;
-                entity.Notes = model.Notes;
-                entity.Deadline = model.Deadline;
-                entity.Recurrance = model.Recurrance;
-                entity.Priority = model.Priority;
-                entity.Position = model.Position;
-                entity.IsCompleted = model.IsCompleted;
-                entity.UserId = model.UserId;
-
-                _context.Update(entity);
-                await _context.SaveChangesAsync();
+                await _taskService.EditTaskAsync(model);
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception)
             {
                 return View("Error");
             }
-            
-            return RedirectToAction("Index", "Home");
         }
     }
 }

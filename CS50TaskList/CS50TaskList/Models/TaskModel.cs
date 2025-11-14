@@ -8,7 +8,7 @@ namespace CS50TaskList.Models
     public class TaskModel
     {
         public int Id { get; set; }
-        [Required (ErrorMessage = "Title required")]
+        [Required(ErrorMessage = "Title required")]
         public string Title { get; set; }
         public string Notes { get; set; }
         public DateTimeOffset? Deadline { get; set; }
