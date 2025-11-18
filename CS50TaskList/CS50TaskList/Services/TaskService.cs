@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CS50TaskList.Services
 {
@@ -174,7 +175,15 @@ namespace CS50TaskList.Services
                     model.Add(item);
                 }
 
-                return model;
+                var returnModel = model.Where(x => x.Deadline != null)
+                    .OrderBy(x => x.Deadline)
+                    .ThenBy(x => x.Priority)
+                    .ToList();
+                returnModel.AddRange(model.Where(x => x.Deadline == null)
+                    .OrderBy(x => x.Priority)
+                    .ToList());
+
+                return returnModel;
             }
             catch (Exception ex) { throw; }
         }
@@ -225,7 +234,15 @@ namespace CS50TaskList.Services
                     model.Add(item);
                 }
 
-                return model;
+                var returnModel = model.Where(x => x.Deadline != null)
+                    .OrderBy(x => x.Deadline)
+                    .ThenBy(x => x.Priority)
+                    .ToList();
+                returnModel.AddRange(model.Where(x => x.Deadline == null)
+                    .OrderBy(x => x.Priority)
+                    .ToList());
+
+                return returnModel;
             }
             catch (Exception ex) { throw; }
         }
