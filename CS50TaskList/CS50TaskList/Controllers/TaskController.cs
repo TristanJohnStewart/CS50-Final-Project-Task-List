@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CS50TaskList.Controllers
 {
@@ -27,11 +28,11 @@ namespace CS50TaskList.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> SetToComplete([FromForm] int id, [FromForm] bool isCompleted)
+        public async System.Threading.Tasks.Task<ActionResult> SetToComplete(int id)
         {
-            await _taskService.CompleteTaskAsync(id, isCompleted);
-            return RedirectToAction("Index", "Home");
+            await _taskService.CompleteTaskAsync(id);
+            return Redirect(Request.Headers["Referer"].ToString());
+                //RedirectToAction("Index", "Task");
         }
 
         // GET: Create
@@ -90,6 +91,7 @@ namespace CS50TaskList.Controllers
             try
             {
                 var model = await _taskService.PrepareForEditAsync(id);
+                // model.Date = model.Deadline.HasValue ? model.Deadline.Value.Date : new DateOnly(); ;
                 return View(model);
             }
             catch (Exception ex) { return View("Error", ex); }
@@ -105,6 +107,7 @@ namespace CS50TaskList.Controllers
 
             try
             {
+                // model.Deadline = DateTime.Parse(model.Date.ToString() + model.Time.ToString());
                 await _taskService.EditTaskAsync(model);
                 return RedirectToAction("Index", "Home");
             }
@@ -112,6 +115,19 @@ namespace CS50TaskList.Controllers
             {
                 return View("Error");
             }
+        }
+
+        public async System.Threading.Tasks.Task<ActionResult> ViewCompletedTasks()
+        {
+            try 
+            {
+                var model = await _taskService.PrepareForViewCompleted();
+                return View(model);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }            
         }
     }
 }

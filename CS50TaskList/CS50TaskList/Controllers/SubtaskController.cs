@@ -35,7 +35,7 @@ namespace CS50TaskList.Controllers
 
             await _subTaskService.CreateSubTaskAsync(model);
 
-            return RedirectToAction("Index", "Home");
+            return Redirect(Request.Headers["Referer"].ToString()); ;
         }
 
         // GET: SubtaskController/Edit/5

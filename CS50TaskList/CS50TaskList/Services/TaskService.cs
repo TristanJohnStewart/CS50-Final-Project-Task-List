@@ -22,12 +22,12 @@ namespace CS50TaskList.Services
             _subTaskRepository = subTaskRepository;
         }
 
-        public async System.Threading.Tasks.Task CompleteTaskAsync(int id, bool isCompleted)
+        public async System.Threading.Tasks.Task CompleteTaskAsync(int id)
         {
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
-                entity.IsCompleted = isCompleted;
+                entity.IsCompleted = !entity.IsCompleted;
                 _repository.Update(entity);
                 await _repository.SaveChangesAsync();
             }
@@ -133,7 +133,58 @@ namespace CS50TaskList.Services
             try
             {
                 var userId = _userManager.GetUserId(_contextAccessor.HttpContext.User);
-                var tasks = await _repository.GetAllAsync();
+                var tasks = await _repository.GetAllAsync(x => !x.IsCompleted);
+                var model = new List<TaskModel>();
+
+                foreach (var task in tasks)
+                {
+                    var item = new TaskModel
+                    {
+                        Id = task.Id,
+                        Title = task.Title,
+                        Notes = task.Notes,
+                        Deadline = task.Deadline,
+                        Recurrance = task.Recurrance,
+                        Priority = task.Priority,
+                        Position = task.Position,
+                        IsCompleted = task.IsCompleted
+                    };
+
+                    var subtasks = await _subTaskRepository.GetAllAsync(x => x.TaskId == item.Id);
+
+                    if (subtasks != null)
+                    {
+                        var subModel = new List<SubTaskModel>();
+                        foreach (var subtask in subtasks)
+                        {
+                            var subItem = new SubTaskModel
+                            {
+                                Id = subtask.Id,
+                                Title = subtask.Title,
+                                Position = subtask.Position,
+                                IsCompleted = subtask.IsCompleted
+                            };
+
+                            subModel.Add(subItem);
+                        }
+
+                        item.SubTasks = subModel;
+                    }
+
+                    model.Add(item);
+                }
+
+                return model;
+            }
+            catch (Exception ex) { throw; }
+        }
+
+        public async System.Threading.Tasks.Task<List<TaskModel>> PrepareForViewCompleted()
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(_contextAccessor.HttpContext.User);
+                var tasks = await _repository.GetAllAsync(x => x.IsCompleted == true);
                 var model = new List<TaskModel>();
 
                 foreach (var task in tasks)
