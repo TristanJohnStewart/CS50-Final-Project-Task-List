@@ -19,7 +19,6 @@ namespace CS50TaskList.Controllers
         public ActionResult Create(int id)
         {
             var model = new SubTaskModel { ParentId = id };
-
             return View(model);
         }
 
@@ -34,15 +33,13 @@ namespace CS50TaskList.Controllers
             }
 
             await _subTaskService.CreateSubTaskAsync(model);
-
-            return Redirect(Request.Headers["Referer"].ToString()); ;
+            return RedirectToAction("Edit", "Task", model.ParentId);
         }
 
         // GET: SubtaskController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
             var model = await _subTaskService.PrepareForEditAsync(id);
-
             return View(model);
         }
 
@@ -57,7 +54,6 @@ namespace CS50TaskList.Controllers
             }
 
             await _subTaskService.EditSubTaskAsync(model);
-
             return RedirectToAction("Index", "Home");
         }
 
@@ -72,11 +68,17 @@ namespace CS50TaskList.Controllers
         // POST: SubtaskController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async System.Threading.Tasks.Task<ActionResult> Delete(SubTaskModel model)
+        public async Task<ActionResult> Delete(SubTaskModel model)
         {
             await _subTaskService.DeleteSubTaskAsync(model);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<ActionResult> SetToComplete(int id)
+        {
+            await _subTaskService.CompleteTaskAsync(id);
+            return Redirect(Request.Headers["Referer"].ToString());
         }
     }
 }

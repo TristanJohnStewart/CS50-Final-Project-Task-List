@@ -5,7 +5,7 @@ namespace CS50TaskList.Services
 {
     public interface ISubTaskService
     {
-        Task CompleteTaskAsync(int id, bool isCompleted);
+        Task CompleteTaskAsync(int id);
         Task CreateSubTaskAsync(SubTaskModel model);
         Task DeleteSubTaskAsync(SubTaskModel model);
         Task EditSubTaskAsync(SubTaskModel model);

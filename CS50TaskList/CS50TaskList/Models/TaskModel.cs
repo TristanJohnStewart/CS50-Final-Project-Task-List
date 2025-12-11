@@ -11,9 +11,8 @@ namespace CS50TaskList.Models
         [Required(ErrorMessage = "Title required")]
         public string Title { get; set; }
         public string Notes { get; set; }
-        public DateTimeOffset? Deadline { get; set; }
-        public DateOnly Date { get; set; }
-        public TimeOnly Time { get; set; }
+        public DateOnly? Date { get; set; }
+        public TimeOnly? Time { get; set; }
 
         [Display(Name = "Repeat")]
         public RecurranceType Recurrance { get; set; }

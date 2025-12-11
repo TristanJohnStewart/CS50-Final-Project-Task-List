@@ -5,126 +5,68 @@
 
 <h2>Create Task</h2>
 
-<div class="container">
-    <form asp-action="Create" asp-controller="Task" method="post">
-        <div class="row">
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label"></label>
-
-                    <input asp-for="Title" class="form-control" placeholder="Title" type="text">
-                </div>
+<form asp-action="Create" asp-controller="Task" method="post">
+    <div class="mb-3">
+        <div class="row mb-3">
+            <div class="col-md-6 col-12">
+                <label for="title" class="form-label">Title</label>
+                <input asp-for="Title" type="text" class="form-control" id="title" placeholder="Enter your title" />
             </div>
 
-            <div class="w-100 d-lg-none d-md-block"></div>
+            <div class="col-md-4 col-8">
+                <label for="date" class="form-label">Date</label>
+                <input asp-for="Date" class="form-control" id="date" type="date" />
+            </div>
 
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Notes" class="form-label"></label>
-
-                    <textarea asp-for="Notes" class="form-control" placeholder="Notes..." type="text"></textarea>
-                </div>
+            <div class="col-md-2 col-4" id="time" style="display:none">
+                <label for="time" class="form-label">Time</label>
+                <input asp-for="Time" class="form-control" type="time" />
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Deadline" for="startDate" class="form-label"></label>
-                    <input asp-for="Deadline" id="startDate" class="form-control" type="datetime-local" />
-                </div>
-            </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="priority" class="form-label">Priority</label>
+                <select asp-for="Priority" aria-label="Priority select" class="form-select" id="priority">
+                    @{
+                        var priorities = new List<CS50TaskList.Enums.PriorityType> {
+                    CS50TaskList.Enums.PriorityType.None,
+                    CS50TaskList.Enums.PriorityType.Low,
+                    CS50TaskList.Enums.PriorityType.Medium,
+                    CS50TaskList.Enums.PriorityType.High
+                    };
 
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Priority" class="form-label"></label>
-
-                    <select asp-for="Priority" aria-label="Priority select" class="form-select">
-                        <option selected value="0">None</option>
-                        <option value="1">Low</option>
-                        <option value="2">Medium</option>
-                        <option value="3">High</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Recurrance" class="form-label"></label>
-
-                    <select asp-for="Recurrance" aria-label="Repeat select" class="form-select">
-                        <option selected value="0">None</option>
-                        <option value="1">Daily</option>
-                        <option value="2">Weekly</option>
-                        <option value="3">Monthly</option>
-                        <option value="4">Yearly</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label asp-for="SubTasks" class="form-label">Sub-Tasks</label>
-
-                @* <div id="subTaskContainer">
-                    @if (Model.SubTasks != null)
-                    {
-                        for (int i = 0; i < Model.SubTasks.Count; i++)
+                        foreach (CS50TaskList.Enums.PriorityType priority in priorities)
                         {
-                            <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary" type="button">-</button>
-                                <input asp-for="SubTasks[i].Title" class="form-control" placeholder="Subtask Title" type="text" value="">
-                            </div>
+                            <option value="@priority">@priority.ToString()</option>
                         }
                     }
-                </div> *@
-                @* <a asp-action="CreateSubTask" asp-controller="Task" class="btn btn-secondary">Create Sub-Task</a> *@
-                <div class="input-group mb-3">
-                    <button class="btn btn-outline-secondary" id="addSubTask" type="button">+</button>
-                    <input class="form-control" id="addSubTaskTitle" placeholder="Subtask Title" type="text" value="">
-                </div>
+                </select>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-primary" type="submit">Create Task</button>
-
-                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+        <div class="row mb-3">
+            <div class="col-12">
+                <label for="notes" class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-control" id="notes" type="text"></textarea>
             </div>
         </div>
-    </form>
-</div>
+    </div>
 
-@*
-    Title:
-    Input Box
+    <button class="btn btn-primary" type="submit">Create Task</button>
+    <a asp-action="Index" asp-controller="Task" class="btn btn-outline-secondary">Cancel</a>
+</form>
 
-    Notes:
-    Input Box
+<script>
+    document.getElementById("date").addEventListener("change", toggleTime);
 
-    Deadline:
-    Calendar Selection
-
-    Repeat:
-    Drop Down Menu with list of repeat types
-
-    Priority:
-    Drop Down Menu
-
-    Sub-Tasks:
-    Add Sub-Task Button
-    +--------------------------------------------------------------+
-    | Sub-Task Title / Input Box | Delete Sub-Task "-" or "Delete" |
-    +--------------------------------------------------------------+
-    (Add sub-task button should be replaced by a new sub-task list entry with input box and delete buttons,
-    then get redrawn at the bottom of the list)
-
-    Save Button | Cancel Button
-*@
-
+    function toggleTime() {
+        var timeInput = document.getElementById("time");
+        if (timeInput.style.display === 'none') {
+            timeInput.style.display = 'block';
+        }
+        else {
+            timeInput.style.display = 'none';
+        }
+    }
+</script>

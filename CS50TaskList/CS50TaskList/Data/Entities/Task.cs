@@ -9,7 +9,8 @@ namespace CS50TaskList.Data.Entities
         public int Id { get; set; }
         public string Title { get; set; }
         public string Notes { get; set; }
-        public DateTimeOffset? Deadline { get; set; }
+        public DateOnly? Date { get; set; }
+        public TimeOnly? Time { get; set; }
         public RecurranceType Recurrance { get; set; }
         public PriorityType Priority { get; set; }
         public int Position { get; set; }

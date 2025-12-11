@@ -1,8 +1,6 @@
 ﻿using CS50TaskList.Data.Entities;
 using CS50TaskList.Models;
 using CS50TaskList.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 
@@ -11,21 +9,17 @@ namespace CS50TaskList.Services
     public class SubTaskService : ISubTaskService
     {
         private readonly IRepository<SubTask> _repository;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IHttpContextAccessor _contextAccessor;
-        public SubTaskService(IRepository<SubTask> repository, IHttpContextAccessor contextAccessor, UserManager<IdentityUser> userManager)
+        public SubTaskService(IRepository<SubTask> repository)
         {
             _repository = repository;
-            _contextAccessor = contextAccessor;
-            _userManager = userManager;
         }
 
-        public async System.Threading.Tasks.Task CompleteTaskAsync(int id, bool isCompleted)
+        public async System.Threading.Tasks.Task CompleteTaskAsync(int id)
         {
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
-                entity.IsCompleted = isCompleted;
+                entity.IsCompleted = !entity.IsCompleted;
                 _repository.Update(entity);
                 await _repository.SaveChangesAsync();
             }
@@ -82,7 +76,8 @@ namespace CS50TaskList.Services
                 var model = new SubTaskModel
                 {
                     Id = id,
-                    Title = entity.Title
+                    Title = entity.Title,
+                    ParentId = entity.TaskId
                 };
 
                 return model;
@@ -99,7 +94,8 @@ namespace CS50TaskList.Services
                 var model = new SubTaskModel
                 {
                     Id = id,
-                    Title = entity.Title
+                    Title = entity.Title,
+                    ParentId = entity.TaskId
                 };
 
                 return model;

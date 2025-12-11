@@ -43,7 +43,8 @@ namespace CS50TaskList.Services
                 {
                     Title = model.Title,
                     Notes = model.Notes,
-                    Deadline = model.Deadline,
+                    Date = model.Date,
+                    Time = (model.Date == null) ? null : model.Time,
                     Recurrance = model.Recurrance,
                     Priority = model.Priority,
                     Position = model.Position,
@@ -61,6 +62,11 @@ namespace CS50TaskList.Services
             try
             {
                 var entity = await _repository.GetByIdAsync(model.Id);
+                var subEntities = await _subTaskRepository.GetAllAsync(x => x.TaskId == model.Id);
+                foreach (var subEntity in subEntities)
+                {
+                    _subTaskRepository.Remove(subEntity);
+                }
                 _repository.Remove(entity);
                 await _repository.SaveChangesAsync();
             }
@@ -74,7 +80,8 @@ namespace CS50TaskList.Services
                 var entity = await _repository.GetByIdAsync(model.Id);
                 entity.Title = model.Title;
                 entity.Notes = model.Notes;
-                entity.Deadline = model.Deadline;
+                entity.Date = model.Date;
+                entity.Time = (model.Date == null) ? null : model.Time;
                 entity.Recurrance = model.Recurrance;
                 entity.Priority = model.Priority;
                 entity.Position = model.Position;
@@ -96,11 +103,29 @@ namespace CS50TaskList.Services
                     Id = entity.Id,
                     Title = entity.Title,
                     Notes = entity.Notes,
-                    Deadline = entity.Deadline,
+                    Date = entity.Date,
+                    Time = entity.Time,
                     Recurrance = entity.Recurrance,
                     Priority = entity.Priority,
-                    Position = entity.Position
+                    Position = entity.Position,
+                    SubTasks = new List<SubTaskModel>()
                 };
+
+                var subtasks = await _subTaskRepository.GetAllAsync(x => x.TaskId == model.Id);
+
+                foreach (var subtask in subtasks)
+                {
+                    var subModel = new SubTaskModel
+                    {
+                        Id = subtask.Id,
+                        Title = subtask.Title,
+                        Position = subtask.Position,
+                        IsCompleted = subtask.IsCompleted,
+                        ParentId = subtask.TaskId
+                    };
+
+                    model.SubTasks.Add(subModel);
+                }
 
                 return model;
             }
@@ -118,11 +143,28 @@ namespace CS50TaskList.Services
                     Id = entity.Id,
                     Title = entity.Title,
                     Notes = entity.Notes,
-                    Deadline = entity.Deadline,
+                    Date = entity.Date, 
+                    Time = entity.Time,
                     Recurrance = entity.Recurrance,
                     Priority = entity.Priority,
-                    Position = entity.Position
+                    Position = entity.Position,
+                    SubTasks = new List<SubTaskModel>()
                 };
+
+                var subtasks = await _subTaskRepository.GetAllAsync(x => x.TaskId == model.Id);
+
+                foreach (var subtask in subtasks)
+                {
+                    var subModel = new SubTaskModel
+                    {
+                        Id = subtask.Id,
+                        Title = subtask.Title,
+                        Position = subtask.Position,
+                        IsCompleted = subtask.IsCompleted
+                    };
+
+                    model.SubTasks.Add(subModel);
+                }
 
                 return model;
             }
@@ -144,7 +186,8 @@ namespace CS50TaskList.Services
                         Id = task.Id,
                         Title = task.Title,
                         Notes = task.Notes,
-                        Deadline = task.Deadline,
+                        Date = task.Date,
+                        Time = task.Time,
                         Recurrance = task.Recurrance,
                         Priority = task.Priority,
                         Position = task.Position,
@@ -175,12 +218,13 @@ namespace CS50TaskList.Services
                     model.Add(item);
                 }
 
-                var returnModel = model.Where(x => x.Deadline != null)
-                    .OrderBy(x => x.Deadline)
-                    .ThenBy(x => x.Priority)
+                var returnModel = model.Where(x => x.Date != null)
+                    .OrderBy(x => x.Date)
+                    .ThenBy(x => x.Time)
+                    .ThenByDescending(x => x.Priority)
                     .ToList();
-                returnModel.AddRange(model.Where(x => x.Deadline == null)
-                    .OrderBy(x => x.Priority)
+                returnModel.AddRange(model.Where(x => x.Date == null)
+                    .OrderByDescending(x => x.Priority)
                     .ToList());
 
                 return returnModel;
@@ -203,7 +247,8 @@ namespace CS50TaskList.Services
                         Id = task.Id,
                         Title = task.Title,
                         Notes = task.Notes,
-                        Deadline = task.Deadline,
+                        Date = task.Date,
+                        Time = task.Time,
                         Recurrance = task.Recurrance,
                         Priority = task.Priority,
                         Position = task.Position,
@@ -234,11 +279,12 @@ namespace CS50TaskList.Services
                     model.Add(item);
                 }
 
-                var returnModel = model.Where(x => x.Deadline != null)
-                    .OrderBy(x => x.Deadline)
+                var returnModel = model.Where(x => x.Date != null)
+                    .OrderBy(x => x.Date)
+                    .ThenBy(x => x.Time)
                     .ThenBy(x => x.Priority)
                     .ToList();
-                returnModel.AddRange(model.Where(x => x.Deadline == null)
+                returnModel.AddRange(model.Where(x => x.Date == null)
                     .OrderBy(x => x.Priority)
                     .ToList());
 

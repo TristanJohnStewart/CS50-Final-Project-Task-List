@@ -6,159 +6,135 @@
 <h2>Edit Task</h2>
 
 <form asp-action="Edit" asp-controller="Task" method="post">
+    <input hidden value="@Model.Id" />
+
     <div class="mb-3">
-        <div class="row">
-            <div class="col-6">
+        <div class="row mb-3">
+            <div class="col-md-6 col-12">
                 <label for="title" class="form-label">Title</label>
                 <input asp-for="Title" type="text" class="form-control" id="title" placeholder="Enter your title" value="@Model.Title">
             </div>
-            
-            <div class="col-4">
-                <label for="date" class="form-label"></label>
-                <input asp-for="Date" id="date" class="form-control" type="date" value="@Model.Date" />
-            </div>
 
-            <div class="col-2">
-                <label asp-for="Deadline" for="startDate" class="form-label"></label>
-                <input class="form-control" type="time" />
+
+
+            @if (Model.Date == null)
+            {
+                <div class="col-md-4 col-8">
+                    <label for="date" class="form-label">Date</label>
+                    <input asp-for="Date" class="form-control" id="date" type="date" />
+                </div>
+
+                <div class="col-md-2 col-4" id="time" style="display:none">
+                    <label for="time" class="form-label">Time</label>
+                    <input asp-for="Time" class="form-control" type="time" />
+                </div>
+            }
+            else
+            {
+                <div class="col-md-4 col-8">
+                    <label for="date" class="form-label">Date</label>
+                    <input asp-for="Date" class="form-control" id="date" type="date" value="@Model.Date.Value.ToString("yyyy-MM-dd")" />
+                </div>
+                if (Model.Time == null)
+                {
+                    <div class="col-md-2 col-4" id="time">
+                        <label for="time" class="form-label">Time</label>
+                        <input asp-for="Time" class="form-control" type="time" />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-2 col-4" id="time">
+                        <label for="time" class="form-label">Time</label>
+                        <input asp-for="Time" class="form-control" type="time" value="@Model.Time.Value.ToString("H:mm:ss")" />
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="priority" class="form-label">Priority</label>
+                <select asp-for="Priority" aria-label="Priority select" class="form-select" id="priority">
+                    @{
+                        var priorities = new List<CS50TaskList.Enums.PriorityType> {
+                    CS50TaskList.Enums.PriorityType.None,
+                    CS50TaskList.Enums.PriorityType.Low,
+                    CS50TaskList.Enums.PriorityType.Medium,
+                    CS50TaskList.Enums.PriorityType.High
+                    };
+
+                        foreach (CS50TaskList.Enums.PriorityType priority in priorities)
+                        {
+                            if (Model.Priority == priority)
+                            {
+                                <option selected value="@priority">@priority.ToString()</option>
+                            }
+                            else
+                            {
+                                <option value="@priority">@priority.ToString()</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <label for="notes" class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-control" id="notes" type="text" value="@Model.Notes"></textarea>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col d-flex align-items-center">
+                <label class="form-label h4 mb-0 me-2" for="addSubTask">Sub-Tasks</label>
+                <a asp-action="Create" asp-controller="Subtask" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" id="addSubTask">Add Sub-Task</a>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-6 col-12">
+                <ul class="list-group list-group-flush">
+                    @if (!Model.SubTasks.Any())
+                    {
+                        <p>You don't have any subtasks.</p>
+                    }
+                    else
+                    {
+                        @foreach (SubTaskModel subTask in Model.SubTasks)
+                        {
+                            <li class="list-group-item d-flex align-items-center">
+                                <label class="form-check-label">@subTask.Title</label>
+                                <div class="ms-auto d-flex gap-2">
+                                    <a asp-action="Edit" asp-controller="Subtask" asp-route-id="@subTask.Id" class="btn btn-primary btn-sm ">Edit</a>
+                                    <a asp-action="Delete" asp-controller="Subtask" asp-route-id="@subTask.Id" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
             </div>
         </div>
     </div>
 
-
+    <button class="btn btn-primary" type="submit">Confirm Edit</button>
+    <a asp-action="Index" asp-controller="Task" class="btn btn-outline-secondary">Cancel</a>
+    @* <a class="btn btn-outline-secondary" href="javascript:history.back()">Cancel</a> *@
+    <a asp-action="Delete" asp-controller="Task" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
 </form>
 
-<div class="container">
-    <form asp-action="Edit" asp-controller="Task" method="post">
-        <input hidden asp-for="Id" value="@Model.Id" />
-        <div class="row">
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label"></label>
+<script>
+    document.getElementById("date").addEventListener("change", toggleTime);
 
-                    <input asp-for="Title" class="form-control" placeholder="Title" type="text" value="@Model.Title">
-                </div>
-            </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Notes" class="form-label"></label>
-
-                    <textarea asp-for="Notes" class="form-control" placeholder="Notes..." type="text" value="@Model.Notes"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Deadline" for="startDate" class="form-label"></label>
-
-                    <input asp-for="Deadline" id="startDate" class="form-control" type="datetime-local" value="@Model.Deadline" />
-                </div>
-            </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Priority" class="form-label"></label>
-
-                    <select asp-for="Priority" aria-label="Priority select" class="form-select">
-                        @{
-                            var priorities =
-                            new List<CS50TaskList.Enums.PriorityType> {
-                        CS50TaskList.Enums.PriorityType.None,
-                        CS50TaskList.Enums.PriorityType.Low,
-                        CS50TaskList.Enums.PriorityType.Medium,
-                        CS50TaskList.Enums.PriorityType.High
-            };
-
-                            foreach (CS50TaskList.Enums.PriorityType priority in priorities)
-                            {
-                                if (Model.Priority == priority)
-                                {
-                                    <option selected value="@priority">@priority.ToString()</option>
-                                }
-                                else
-                                {
-                                    <option value="@priority">@priority.ToString()</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-
-            <div class="w-100 d-lg-none d-md-block"></div>
-
-            <div class="col">
-                <div class="mb-3">
-                    <label asp-for="Recurrance" class="form-label"></label>
-
-                    <select asp-for="Recurrance" aria-label="Repeat select" class="form-select">
-                        @{
-                            var recurrances =
-                            new List<CS50TaskList.Enums.RecurranceType> {
-                        CS50TaskList.Enums.RecurranceType.None,
-                        CS50TaskList.Enums.RecurranceType.Daily,
-                        CS50TaskList.Enums.RecurranceType.Weekly,
-                        CS50TaskList.Enums.RecurranceType.Monthly,
-                        CS50TaskList.Enums.RecurranceType.Yearly
-            };
-
-                            foreach (CS50TaskList.Enums.RecurranceType recurrance in recurrances)
-                            {
-                                if (Model.Recurrance == recurrance)
-                                {
-                                    <option selected value="@recurrance">@recurrance.ToString()</option>
-                                }
-                                else
-                                {
-                                    <option value="@recurrance">@recurrance.ToString()</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label asp-for="SubTasks" class="form-label">Sub-Tasks</label>
-                <a asp-action="Create" asp-controller="SubTask" asp-route-id="@Model.Id" class="btn btn-primary">Add SubTask</a>
-
-                @* <div id="subTaskContainer">
-                    @if (Model.SubTasks != null)
-                    {
-                        for (int i = 0; i < Model.SubTasks.Count; i++)
-                        {
-                            <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary" type="button">-</button>
-                                <input asp-for="SubTasks[i].Title" class="form-control" placeholder="Subtask Title" type="text" value="">
-                            </div>
-                        }
-                    }
-                </div> *@
-                @* <a asp-action="CreateSubTask" asp-controller="Task" class="btn btn-secondary">Create Sub-Task</a> *@
-                <div class="input-group mb-3">
-                    <button class="btn btn-outline-secondary" id="addSubTask" type="button">+</button>
-                    <input class="form-control" id="addSubTaskTitle" placeholder="Subtask Title" type="text" value="">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-primary" type="submit">Confirm Edit</button>
-
-                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
-
-                <a asp-action="Delete" asp-controller="Task" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
-            </div>
-        </div>
-    </form>
-</div>
+    function toggleTime() {
+        var timeInput = document.getElementById("time");
+        if (timeInput.style.display === 'none') {
+            timeInput.style.display = 'block';
+        }
+        else {
+            timeInput.style.display = 'none';
+        }
+    }
+</script>

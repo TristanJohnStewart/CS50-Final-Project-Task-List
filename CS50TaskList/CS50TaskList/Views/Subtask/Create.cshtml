@@ -7,10 +7,10 @@
 
 <div class="container">
     <form asp-action="Create" asp-controller="Subtask" method="post">
-        <input asp-for="ParentId" hidden type="number" value="@Model.ParentId" />
+        <input asp-for="ParentId" hidden value="@Model.ParentId" />
 
         <div class="row">
-            <div class="col">
+            <div class="col-md-6">
                 <div class="mb-3">
                     <label asp-for="Title" class="form-label"></label>
 
@@ -23,7 +23,7 @@
             <div class="col">
                 <button class="btn btn-primary" type="submit">Create Subtask</button>
 
-                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Edit" asp-controller="Task" asp-route-id="@Model.ParentId" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </div>
     </form>
