@@ -44,12 +44,16 @@ namespace CS50TaskList.Services
                     Title = model.Title,
                     Notes = model.Notes,
                     Date = model.Date,
-                    Time = (model.Date == null) ? null : model.Time,
                     Recurrance = model.Recurrance,
                     Priority = model.Priority,
                     Position = model.Position,
                     UserId = _userManager.GetUserId(_contextAccessor.HttpContext.User)
                 };
+
+                if (model.Date is not null)
+                {
+                    entity.Time = model.Time;
+                }
 
                 await _repository.Create(entity);
                 await _repository.SaveChangesAsync();
@@ -81,7 +85,14 @@ namespace CS50TaskList.Services
                 entity.Title = model.Title;
                 entity.Notes = model.Notes;
                 entity.Date = model.Date;
-                entity.Time = (model.Date == null) ? null : model.Time;
+                if (model.Date is not null)
+                {
+                    entity.Time = model.Time;
+                }
+                else
+                {
+                    entity.Time = null;
+                }
                 entity.Recurrance = model.Recurrance;
                 entity.Priority = model.Priority;
                 entity.Position = model.Position;
