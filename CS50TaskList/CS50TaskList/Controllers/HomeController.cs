@@ -20,7 +20,14 @@ namespace CS50TaskList.Controllers
 
         public async Task<ActionResult> Index()
         {
-            return (User.Identity.IsAuthenticated) ? RedirectToAction("Index", "Task") : View();
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Task");
+            }
+            else
+            {
+                return View();
+            }
             //_logger.Log(LogLevel.Information, "Returning {model} to Index view", model);
         }
 
