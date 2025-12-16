@@ -37,7 +37,7 @@ namespace CS50TaskList.Repositories
         {
             try
             {
-                IQueryable<T> query = _dbSet;
+                IQueryable<T> query = _dbSet.AsNoTracking();
 
                 if (typeof(T).GetProperty("UserId") is not null)
                 {
