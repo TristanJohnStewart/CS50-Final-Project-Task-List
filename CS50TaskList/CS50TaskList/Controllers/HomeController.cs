@@ -7,7 +7,7 @@ namespace CS50TaskList.Controllers
 {
     public class HomeController : Controller
     {
-        public async Task<ActionResult> Index()
+        public IActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
             {
