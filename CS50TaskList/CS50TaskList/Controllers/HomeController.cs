@@ -26,7 +26,7 @@ namespace CS50TaskList.Controllers
         /// <summary>
         ///     Action to direct a user to the correct action/view based on their login status.
         /// </summary>
-        /// <returns><see cref="Controller.View"/>.</returns>
+        /// <returns>A <see cref="Controller.View"/>.</returns>
         public IActionResult Index()
         {
             _logger.LogInformation("Checking if the user is logged in or not.");
