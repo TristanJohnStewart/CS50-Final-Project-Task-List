@@ -1,7 +1,6 @@
 using CS50TaskList.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace CS50TaskList.Controllers
 {

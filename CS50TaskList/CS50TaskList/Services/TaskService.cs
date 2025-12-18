@@ -3,6 +3,7 @@ using CS50TaskList.Models;
 using CS50TaskList.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,30 +16,49 @@ namespace CS50TaskList.Services
         private readonly IRepository<SubTask> _subTaskRepository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IHttpContextAccessor _contextAccessor;
-        public TaskService(IRepository<Task> repository, IHttpContextAccessor contextAccessor, UserManager<IdentityUser> userManager, IRepository<SubTask> subTaskRepository)
+        private readonly ILogger<TaskService> _logger;
+
+        public TaskService(IRepository<Task> repository, IHttpContextAccessor contextAccessor, UserManager<IdentityUser> userManager, IRepository<SubTask> subTaskRepository, ILogger<TaskService> logger)
         {
             _repository = repository;
             _contextAccessor = contextAccessor;
             _userManager = userManager;
             _subTaskRepository = subTaskRepository;
+            _logger = logger;
         }
 
         public async System.Threading.Tasks.Task CompleteTaskAsync(int id)
         {
+            _logger.LogInformation("Beginning TaskService CompleteTaskAsync Method for Task #{id}.", id);
             try
             {
+                _logger.LogInformation("Retrieving Task Entity #{id} from DB.", id);
                 var entity = await _repository.GetByIdAsync(id);
+
+                _logger.LogInformation("Updating Task Entity #{id} IsComplete property to {!entity.IsCompleted} from {entity.IsCompleted}", id, !entity.IsCompleted, entity.IsCompleted);
                 entity.IsCompleted = !entity.IsCompleted;
+
+                _logger.LogInformation("Updating Task Entity #{id} in DB.", id);
                 _repository.Update(entity);
+
+                _logger.LogInformation("Saving changes to DB.");
                 await _repository.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully ending TaskService CompleteTaskAsync Method for Task #{id}.", id);
             }
-            catch (Exception ex) { throw; }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Error occured in TaskService CompleteTaskAsync Method. Error: {ex}", ex);
+                throw; 
+            }
         }
 
         public async System.Threading.Tasks.Task CreateTaskAsync(TaskModel model)
         {
+            _logger.LogInformation("Beginning TaskService CompleteTaskAsync Method for new Task");
             try
             {
+                _logger.LogInformation("Intialising new Task Entity.");
                 Task entity = new()
                 {
                     Title = model.Title,
@@ -50,29 +70,47 @@ namespace CS50TaskList.Services
                     UserId = _userManager.GetUserId(_contextAccessor.HttpContext.User)
                 };
 
+                _logger.LogInformation("Checking if Task Time needs to be intialised.");
                 if (model.Date is not null)
                 {
                     entity.Time = model.Time;
                 }
 
+                _logger.LogInformation("Creating new Task entry in the DB.");
                 await _repository.Create(entity);
+
+                _logger.LogInformation("Saving changes to DB.");
                 await _repository.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully ending TaskService CreateTaskAsync Method.");
             }
-            catch (Exception ex) { throw; }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Error occured in TaskService CreateTaskAsync Method. Error: {ex}", ex);
+                throw; 
+            }
         }
 
         public async System.Threading.Tasks.Task DeleteTaskAsync(TaskModel model)
         {
+            _logger.LogInformation("Beginning TaskService DeleteTaskAsync Method to delete Task #{model.Id} from DB.", model.Id);
             try
             {
+                _logger.LogInformation("Retrieving Task Entity #{model.Id} from DB.", model.Id);
                 var entity = await _repository.GetByIdAsync(model.Id);
+
+                _logger.LogInformation("Retrieving Task Entity #{model.Id} from DB.", model.Id);
                 var subEntities = await _subTaskRepository.GetAllAsync(x => x.TaskId == model.Id);
+
                 foreach (var subEntity in subEntities)
                 {
                     _subTaskRepository.Remove(subEntity);
                 }
+
                 _repository.Remove(entity);
+
                 await _repository.SaveChangesAsync();
+
             }
             catch (Exception ex) { throw; }
         }

@@ -33,7 +33,7 @@ namespace CS50TaskList.Controllers
             }
 
             await _subTaskService.CreateSubTaskAsync(model);
-            return RedirectToAction("Edit", "Task", model.ParentId);
+            return RedirectToAction("Edit", "Task", new {id = model.ParentId});
         }
 
         // GET: SubtaskController/Edit/5
