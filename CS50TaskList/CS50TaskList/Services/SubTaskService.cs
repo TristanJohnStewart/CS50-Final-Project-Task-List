@@ -7,11 +7,19 @@ using System.Threading.Tasks;
 
 namespace CS50TaskList.Services
 {
+    /// <summary>
+    ///     Service class to be used by the controllers for handling calls relating to Subtasks to the Repository.
+    /// </summary>
     public class SubTaskService : ISubTaskService
     {
         private readonly IRepository<SubTask> _repository;
         private readonly ILogger<SubTaskService> _logger;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="SubTaskService" /> class.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="logger">Logger instance.</param>
         public SubTaskService(IRepository<SubTask> repository, ILogger<SubTaskService> logger)
         {
             _repository = repository;
