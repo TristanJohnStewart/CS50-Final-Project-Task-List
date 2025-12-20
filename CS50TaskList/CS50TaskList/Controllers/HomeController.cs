@@ -1,7 +1,4 @@
-using CS50TaskList.Data.Entities;
 using CS50TaskList.Models;
-using CS50TaskList.Repositories;
-using CS50TaskList.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;

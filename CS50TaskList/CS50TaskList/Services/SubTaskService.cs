@@ -4,6 +4,8 @@ using CS50TaskList.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
+using TaskEntity = CS50TaskList.Data.Entities.Task;
 
 namespace CS50TaskList.Services
 {
@@ -30,7 +32,7 @@ namespace CS50TaskList.Services
         ///     Method for switching a <see cref="SubTask.IsCompleted" /> state.
         /// </summary>
         /// <param name="id">Id of the Subtask.</param>
-        public async System.Threading.Tasks.Task CompleteTaskAsync(int id)
+        public async Task CompleteTaskAsync(int id)
         {
             _logger.LogInformation("Beginning SubTaskService CompleteTaskAsync Method for Subtask #{id}.", id);
             try
@@ -57,10 +59,10 @@ namespace CS50TaskList.Services
         }
 
         /// <summary>
-        ///     Method for creating a new <see cref="SubTask" /> for a <see cref="Task" />.
+        ///     Method for creating a new <see cref="SubTask" /> for a <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
-        public async System.Threading.Tasks.Task CreateSubTaskAsync(SubTaskModel model)
+        public async Task CreateSubTaskAsync(SubTaskModel model)
         {
             _logger.LogInformation("Beginning SubTaskService CreateSubTaskAsync Method to create Subtask for Task #{model.ParentId}.", model.ParentId);
             try
@@ -92,7 +94,7 @@ namespace CS50TaskList.Services
         ///     Method for deleting a <see cref="SubTask" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
-        public async System.Threading.Tasks.Task DeleteSubTaskAsync(SubTaskModel model)
+        public async Task DeleteSubTaskAsync(SubTaskModel model)
         {
             _logger.LogInformation("Beginning SubTaskService DeleteSubTaskAsync Method to delete Subtask #{model.Id} from DB.", model.Id);
             try
@@ -119,7 +121,7 @@ namespace CS50TaskList.Services
         ///     Method for Editing a <see cref="SubTask" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
-        public async System.Threading.Tasks.Task EditSubTaskAsync(SubTaskModel model)
+        public async Task EditSubTaskAsync(SubTaskModel model)
         {
             _logger.LogInformation("Beginning SubTaskService EditSubTaskAsync Method to edit Subtask #{model.Id} in DB.", model.Id);
             try

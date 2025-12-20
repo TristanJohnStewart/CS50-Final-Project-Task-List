@@ -1,6 +1,7 @@
 ﻿using CS50TaskList.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TaskEntity = CS50TaskList.Data.Entities.Task;
 
 namespace CS50TaskList.Services
 {
@@ -10,25 +11,25 @@ namespace CS50TaskList.Services
     public interface ITaskService
     {
         /// <summary>
-        ///     Method for switching a <see cref="Task.IsCompleted" /> state.
+        ///     Method for switching a <see cref="TaskEntity.IsCompleted" /> state.
         /// </summary>
         /// <param name="id">Id of the Subtask.</param>
         Task CompleteTaskAsync(int id);
 
         /// <summary>
-        ///     Method for creating a new <see cref="Task" />.
+        ///     Method for creating a new <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
         Task CreateTaskAsync(TaskModel model);
 
         /// <summary>
-        ///     Method for deleting a <see cref="Task" />.
+        ///     Method for deleting a <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
         Task DeleteTaskAsync(TaskModel model);
 
         /// <summary>
-        ///     Method for Editing a <see cref="Task" />.
+        ///     Method for Editing a <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
         Task EditTaskAsync(TaskModel model);
@@ -50,13 +51,13 @@ namespace CS50TaskList.Services
         /// <summary>
         ///     Method for preparing and returning a <see cref="List{}" /> of <see cref="TaskModel" />.
         /// </summary>
-        /// <returns>A <see cref="List{}" /> of <see cref="TaskModel"/>.</returns>
+        /// <returns>A <see cref="List{}" /> of <see cref="TaskModel" />.</returns>
         Task<List<TaskModel>> PrepareForIndexAsync();
 
-        // <summary>
+        /// <summary>
         ///     Method for preparing and returning a <see cref="List{}" /> of <see cref="TaskModel" />.
         /// </summary>
-        /// <returns>A <see cref="List{}" /> of <see cref="TaskModel"/>.</returns>
+        /// <returns>A <see cref="List{}" /> of <see cref="TaskModel" />.</returns>
         Task<List<TaskModel>> PrepareForViewCompleted();
     }
 }

@@ -52,7 +52,7 @@ namespace CS50TaskList.Controllers
         // POST: SubtaskController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(SubTaskModel model)
+        public async Task<IActionResult> Create(SubTaskModel model)
         {
             _logger.LogInformation("Checking is ModelState is valid.");
             if (!ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace CS50TaskList.Controllers
         /// <param name="id">Id of the Subtask.</param>
         /// <returns>A <see cref="SubTaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
         // GET: SubtaskController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             _logger.LogInformation("Intialising a new SubTaskModel and assigning it with the model returned from PrepareForEditAsync.");
             var model = await _subTaskService.PrepareForEditAsync(id);
@@ -93,7 +93,7 @@ namespace CS50TaskList.Controllers
         // POST: SubtaskController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(SubTaskModel model)
+        public async Task<IActionResult> Edit(SubTaskModel model)
         {
             _logger.LogInformation("Checking is ModelState is valid.");
             if (!ModelState.IsValid)
@@ -115,7 +115,7 @@ namespace CS50TaskList.Controllers
         /// <param name="id">Id of the Subtask.</param>
         /// <returns>A <see cref="SubTaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
         // GET: SubtaskController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             _logger.LogInformation("Intialising a new SubTaskModel and assigning it with the model returned from PrepareForDeleteAsync.");
             var model = await _subTaskService.PrepareForDeleteAsync(id);
@@ -133,7 +133,7 @@ namespace CS50TaskList.Controllers
         // POST: SubtaskController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(SubTaskModel model)
+        public async Task<IActionResult> Delete(SubTaskModel model)
         {
             _logger.LogInformation("Calling DeleteSubTaskAsync and passing model through it.");
             await _subTaskService.DeleteSubTaskAsync(model);
@@ -147,7 +147,7 @@ namespace CS50TaskList.Controllers
         /// </summary>
         /// <param name="id">Id of the Subtask.</param>
         /// <returns>The previous <see cref="Controller.View()"/>.</returns>
-        public async Task<ActionResult> SetToComplete(int id)
+        public async Task<IActionResult> SetToComplete(int id)
         {
             _logger.LogInformation("Calling CompleteTaskAsync and passing id through it.");
             await _subTaskService.CompleteTaskAsync(id);

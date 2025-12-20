@@ -47,7 +47,7 @@ namespace CS50TaskList.Controllers
         /// </summary>
         /// <param name="id">Id of the Task.</param>
         /// <returns>The previous <see cref="Controller.View()"/>.</returns>
-        public async Task<ActionResult> SetToComplete(int id)
+        public async Task<IActionResult> SetToComplete(int id)
         {
             _logger.LogInformation("Beginning SetToComplete.");
 
@@ -63,7 +63,7 @@ namespace CS50TaskList.Controllers
         /// </summary>
         /// <returns>A <see cref="Controller.View()"/>.</returns>
         // GET: Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             _logger.LogInformation("Beginning Create (GET).");
 
@@ -79,7 +79,7 @@ namespace CS50TaskList.Controllers
         /// <param name="model">Model of the data.</param>
         /// <returns>A <see cref="Controller.View()"/>.</returns>
         [HttpPost]
-        public async Task<ActionResult> Create(TaskModel model)
+        public async Task<IActionResult> Create(TaskModel model)
         {
             _logger.LogInformation("Beginning Create (POST).");
 
@@ -111,7 +111,7 @@ namespace CS50TaskList.Controllers
         /// <param name="id">Id of the Task.</param>
         /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
         // GET: Delete
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             _logger.LogInformation("Beginning Delete (GET).");
 
@@ -136,7 +136,7 @@ namespace CS50TaskList.Controllers
         /// <param name="model">Model of the data.</param>
         /// <returns>A <see cref="Controller.View()"/>.</returns>
         [HttpPost]
-        public async Task<ActionResult> Delete(TaskModel model)
+        public async Task<IActionResult> Delete(TaskModel model)
         {
             _logger.LogInformation("Beginning Delete (POST).");
 
@@ -168,7 +168,7 @@ namespace CS50TaskList.Controllers
         /// <param name="id">Id of the Task.</param>
         /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
         // GET: Edit
-        public async Task<ActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             _logger.LogInformation("Beginning Edit (GET).");
 
@@ -193,7 +193,7 @@ namespace CS50TaskList.Controllers
         /// <param name="model">Model of the data.</param>
         /// <returns>A <see cref="Controller.View()"/>.</returns>
         [HttpPost]
-        public async Task<ActionResult> Edit(TaskModel model)
+        public async Task<IActionResult> Edit(TaskModel model)
         {
             _logger.LogInformation("Beginning Edit (POST).");
 
@@ -223,7 +223,7 @@ namespace CS50TaskList.Controllers
         ///     GET Action to return the view for viewing <see cref="TaskModel.IsCompleted" /> that equal True.
         /// </summary>
         /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
-        public async Task<ActionResult> ViewCompletedTasks()
+        public async Task<IActionResult> ViewCompletedTasks()
         {
             _logger.LogInformation("Beginning ViewCompletedTasks (GET).");
             try 

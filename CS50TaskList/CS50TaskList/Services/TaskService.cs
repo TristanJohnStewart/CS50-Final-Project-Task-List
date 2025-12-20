@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
+using TaskEntity = CS50TaskList.Data.Entities.Task;
 
 namespace CS50TaskList.Services
 {
@@ -16,7 +18,7 @@ namespace CS50TaskList.Services
     /// </summary>
     public class TaskService : ITaskService
     {
-        private readonly IRepository<Data.Entities.Task> _repository;
+        private readonly IRepository<TaskEntity> _repository;
         private readonly IRepository<SubTask> _subTaskRepository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -30,7 +32,7 @@ namespace CS50TaskList.Services
         /// <param name="userManager">User Manager instance.</param>
         /// <param name="subTaskRepository">Repository for Tasks.</param>
         /// <param name="logger">Logger instance.</param>
-        public TaskService(IRepository<Data.Entities.Task> repository, IHttpContextAccessor contextAccessor, UserManager<IdentityUser> userManager, IRepository<SubTask> subTaskRepository, ILogger<TaskService> logger)
+        public TaskService(IRepository<TaskEntity> repository, IHttpContextAccessor contextAccessor, UserManager<IdentityUser> userManager, IRepository<SubTask> subTaskRepository, ILogger<TaskService> logger)
         {
             _repository = repository;
             _contextAccessor = contextAccessor;
@@ -40,10 +42,10 @@ namespace CS50TaskList.Services
         }
 
         /// <summary>
-        ///     Method for switching a <see cref="Task.IsCompleted" /> state.
+        ///     Method for switching a <see cref="TaskEntity.IsCompleted" /> state.
         /// </summary>
         /// <param name="id">Id of the Subtask.</param>
-        public async System.Threading.Tasks.Task CompleteTaskAsync(int id)
+        public async Task CompleteTaskAsync(int id)
         {
             _logger.LogInformation("Beginning TaskService CompleteTaskAsync Method for Task #{id}.", id);
             try
@@ -70,16 +72,16 @@ namespace CS50TaskList.Services
         }
 
         /// <summary>
-        ///     Method for creating a new <see cref="Task" />.
+        ///     Method for creating a new <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
-        public async System.Threading.Tasks.Task CreateTaskAsync(TaskModel model)
+        public async Task CreateTaskAsync(TaskModel model)
         {
             _logger.LogInformation("Beginning TaskService CompleteTaskAsync Method for new Task");
             try
             {
                 _logger.LogInformation("Intialising new Task Entity.");
-                Task entity = new()
+                TaskEntity entity = new()
                 {
                     Title = model.Title,
                     Notes = model.Notes,
@@ -112,10 +114,10 @@ namespace CS50TaskList.Services
         }
 
         /// <summary>
-        ///     Method for deleting a <see cref="Task" />.
+        ///     Method for deleting a <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
-        public async System.Threading.Tasks.Task DeleteTaskAsync(TaskModel model)
+        public async Task DeleteTaskAsync(TaskModel model)
         {
             _logger.LogInformation("Beginning TaskService DeleteTaskAsync Method to delete Task #{model.Id} from DB.", model.Id);
             try
@@ -148,10 +150,10 @@ namespace CS50TaskList.Services
         }
 
         /// <summary>
-        ///     Method for Editing a <see cref="Task" />.
+        ///     Method for Editing a <see cref="TaskEntity" />.
         /// </summary>
         /// <param name="model">Model representing the data.</param>
-        public async System.Threading.Tasks.Task EditTaskAsync(TaskModel model)
+        public async Task EditTaskAsync(TaskModel model)
         {
             _logger.LogInformation("Beginning TaskService.EditSubTaskAsync() Method to edit Task #{model.Id} in DB.", model.Id);
             try
