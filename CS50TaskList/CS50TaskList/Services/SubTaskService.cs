@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CS50TaskList.Services
 {
     /// <summary>
-    ///     Service class to be used by the controllers for handling calls relating to Subtasks to the Repository.
+    ///     Service class to be used by the controllers for handling calls relating to Subtasks to the Repository class.
     /// </summary>
     public class SubTaskService : ISubTaskService
     {
@@ -158,7 +158,7 @@ namespace CS50TaskList.Services
                 _logger.LogInformation("Retrieving Subtask Entity #{id} from DB.", id);
                 var entity = await _repository.GetByIdAsync(id);
 
-                _logger.LogInformation("Intialising new Subtask Entity for Subtask #{id}.", id);
+                _logger.LogInformation("Intialising new SubtaskModel for Subtask #{id}.", id);
                 var model = new SubTaskModel
                 {
                     Id = id,
@@ -189,7 +189,7 @@ namespace CS50TaskList.Services
                 _logger.LogInformation("Retrieving Subtask Entity #{id} from DB.", id);
                 var entity = await _repository.GetByIdAsync(id);
 
-                _logger.LogInformation("Intialising new Subtask Entity for Subtask #{id}.", id);
+                _logger.LogInformation("Intialising new SubtaskModel for Subtask #{id}.", id);
                 var model = new SubTaskModel
                 {
                     Id = id,

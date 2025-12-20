@@ -27,7 +27,6 @@ namespace CS50TaskList.Controllers
             _logger = logger;
         }
 
-
         /// <summary>
         ///     GET Action to return the view for creating a new <see cref="SubTaskModel" /> for a <see cref="TaskModel" />.
         /// </summary>
@@ -49,7 +48,7 @@ namespace CS50TaskList.Controllers
         ///     before redirecting to the edit page for the parent task.
         /// </summary>
         /// <param name="model">Model of the data.</param>
-        /// <returns>A <see cref="SubTaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
+        /// <returns>A <see cref="SubTaskModel.ParentId"/> passed through to a <see cref="TaskController.Edit(int)"/>.</returns>
         // POST: SubtaskController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -90,7 +89,7 @@ namespace CS50TaskList.Controllers
         ///     before redirecting to the landing page.
         /// </summary>
         /// <param name="model">Model of the data.</param>
-        /// <returns>A <see cref="SubTaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
+        /// <returns>A <see cref="Controller.View()"/>.</returns>
         // POST: SubtaskController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -130,7 +129,7 @@ namespace CS50TaskList.Controllers
         ///     <see cref="SubTaskService.DeleteSubTaskAsync" /> before redirecting to the landing page.
         /// </summary>
         /// <param name="model">Model of the data.</param>
-        /// <returns>A <see cref="SubTaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
+        /// <returns>A <see cref="Controller.View()"/>.</returns>
         // POST: SubtaskController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -147,6 +146,7 @@ namespace CS50TaskList.Controllers
         ///     Action for switching a <see cref="SubTaskModel.IsCompleted" /> state.
         /// </summary>
         /// <param name="id">Id of the Subtask.</param>
+        /// <returns>The previous <see cref="Controller.View()"/>.</returns>
         public async Task<ActionResult> SetToComplete(int id)
         {
             _logger.LogInformation("Calling CompleteTaskAsync and passing id through it.");
