@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "View Completed Tasks";
+}
+@model List<CS50TaskList.Models.TaskModel>
+
+<h1 class="display-6 pb-3">Completed Tasks</h1>
+
+<div class="d-flex justify-content-between align-items-center">
+    <a asp-action="Index" asp-controller="Task" class="btn btn-primary">View Tasks</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="h-100 p-5 bg-light border rounded-3 mt-3 mx-2 mx-md-5">
+        <p class="fs-2 text-center">There are no completed tasks to display.</p>
+    </div>
+}
+else
+{
+    <div class="pt-2">
+        <div class="row row-cols-1 row-cols-md-3 g-4" data-masonry='{"percentPosition": true }'>
+            @foreach (TaskModel task in Model)
+            {
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">@task.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@task.Notes</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <p class="card-text"><strong>Priority:</strong> @task.Priority</p>
+                            </li>
+                            @if (task.Date != null && task.Time != null)
+                            {
+                                <li class="list-group-item">
+                                    <p class="card-text"><strong>Deadline: </strong>@task.Time - @task.Date</p>
+                                </li>
+                            }
+                            else if (task.Date != null)
+                            {
+                                <li class="list-group-item">
+                                    <p class="card-text"><strong>Deadline: </strong>@task.Date</p>
+                                </li>
+                            }
+                        </ul>
+                        @{
+                            var subTasks = task.SubTasks;
+                            if (subTasks.Any())
+                            {
+                                <div class="card-header">
+                                    <h6 class="card-subtitle">SubTasks</h6>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var subTask in subTasks)
+                                    {
+                                        <li class="list-group-item">
+                                            @if (subTask.IsCompleted)
+                                            {
+                                                <a asp-action="SetToComplete" asp-controller="Subtask" asp-route-id="@subTask.Id" class="btn btn-sm btn-primary">&#128505;</a>
+                                                <del>@subTask.Title</del>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="SetToComplete" asp-controller="Subtask" asp-route-id="@subTask.Id" class="btn btn-sm btn-secondary">&#128505;</a>
+                                                @subTask.Title
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        }
+                        <div class="card-footer">
+                            <a asp-action="SetToComplete" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-sm btn-primary">Uncomplete</a>
+                            <a asp-action="Edit" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a asp-action="Delete" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+@* else
+{
+    <div class="pt-2">
+        <div class="row row-cols-1 row-cols-md-3 g-4" data-masonry='{"percentPosition": true }'>
+            @foreach (TaskModel task in Model)
+            {
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">@task.Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@task.Notes</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (SubTaskModel subTask in task.SubTasks)
+                            {
+                                <li class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" />
+                                    @subTask.Title
+                                </li>
+                            }
+                        </ul>
+                        <div class="card-body">
+                            <p class="card-text"><strong>Priority:</strong> @task.Priority</p>
+                            <p class="card-text"><strong>Deadline:</strong> @task.Date</p>
+                            <p class="card-text"><strong>Deadline:</strong> @task.Time</p>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="SetToComplete" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-sm btn-primary">Uncomplete</a>
+                            <a asp-action="Edit" asp-controller="Task" asp-route-id="@task.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+} *@
+

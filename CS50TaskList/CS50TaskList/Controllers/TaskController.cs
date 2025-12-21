@@ -1,158 +1,244 @@
-﻿using AspNetCoreGeneratedDocument;
-using CS50TaskList.Data;
-using CS50TaskList.Data.Entities;
-using CS50TaskList.Models;
-using Microsoft.AspNetCore.Http;
+﻿using CS50TaskList.Models;
+using CS50TaskList.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace CS50TaskList.Controllers
 {
+    /// <summary>
+    ///     Controller class for the Task related actions.
+    /// </summary>
+    [Authorize]
     public class TaskController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public TaskController(ApplicationDbContext context) { _context = context; }
-
-        // GET: Create
-        public ActionResult Create()
+        private readonly ITaskService _taskService;
+        private readonly ILogger<TaskController> _logger;
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TaskController" /> class.
+        /// </summary>
+        /// <param name="taskService">Service for Tasks.</param>
+        /// <param name="logger">Logger instance.</param>
+        public TaskController(ITaskService taskService, ILogger<TaskController> logger)
         {
+            _taskService = taskService;
+            _logger = logger;
+        }
+
+        /// <summary>
+        ///     GET Action for the landing page / view of the user's list of tasks.
+        /// </summary>
+        /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
+        public async Task<IActionResult> IndexAsync()
+        {
+            _logger.LogInformation("Beginning IndexAsync.");
+
+            _logger.LogInformation("Intialising a new List<TaskModel> with all of the user's tasks.");
+            var model = await _taskService.PrepareForIndexAsync();
+
+            _logger.LogInformation("Returning model to view.");
+            return View(model);
+        }
+
+        /// <summary>
+        ///     Action for switching a <see cref="TaskModel.IsCompleted" /> state.
+        /// </summary>
+        /// <param name="id">Id of the Task.</param>
+        /// <returns>The previous <see cref="Controller.View()"/>.</returns>
+        public async Task<IActionResult> SetToComplete(int id)
+        {
+            _logger.LogInformation("Beginning SetToComplete.");
+
+            _logger.LogInformation("Calling CompleteTaskAsync and passing id through it.");
+            await _taskService.CompleteTaskAsync(id);
+
+            _logger.LogInformation("Action Complete, redirecting to previous page.");
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
+        /// <summary>
+        ///     GET Action to return the view for creating a new <see cref="TaskModel" />.
+        /// </summary>
+        /// <returns>A <see cref="Controller.View()"/>.</returns>
+        // GET: Create
+        public IActionResult Create()
+        {
+            _logger.LogInformation("Beginning Create (GET).");
+
+            _logger.LogInformation("Loading view.");
             return View();
         }
 
+        /// <summary>
+        ///     POST Action to check if the model is valid for manipulation and passing a 
+        ///     <see cref="TaskModel" /> through to <see cref="TaskService.CreateTaskAsync" />
+        ///     before redirecting to the landing page.
+        /// </summary>
+        /// <param name="model">Model of the data.</param>
+        /// <returns>A <see cref="Controller.View()"/>.</returns>
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> CreateAsync(TaskModel model)
+        public async Task<IActionResult> Create(TaskModel model)
         {
-            if (model == null)
+            _logger.LogInformation("Beginning Create (POST).");
+
+            _logger.LogInformation("Checking is ModelState is valid.");
+            if (!ModelState.IsValid)
             {
+                _logger.LogInformation("ModelState is not valid, redirecting to Error view.");
                 return View("Error");
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                CS50TaskList.Data.Entities.Task entity = new CS50TaskList.Data.Entities.Task();
-                entity.Id = model.Id;
-                entity.Title = model.Title;
-                entity.Notes = model.Notes;
-                entity.Deadline = model.Deadline;
-                entity.Recurrance = model.Recurrance;
-                entity.Priority = model.Priority;
-                entity.Position = model.Position;
-                entity.IsCompleted = model.IsCompleted;
-                entity.UserId = model.UserId;
+                _logger.LogInformation("Creating and saving Task in Repository.");
+                await _taskService.CreateTaskAsync(model);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Error occured in TaskController.Create Action. Error: {ex}", ex);
+                return View("Error", ex); 
+            }
 
-                _context.Add(entity);
-                await _context.SaveChangesAsync();
+            _logger.LogInformation("Action Complete, redirecting to landing page.");
+            return RedirectToAction("Index", "Home");
+        }
+
+        /// <summary>
+        ///     GET Action to return the view for deleting a <see cref="TaskModel" />.
+        /// </summary>
+        /// <param name="id">Id of the Task.</param>
+        /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
+        // GET: Delete
+        public async Task<IActionResult> Delete(int id)
+        {
+            _logger.LogInformation("Beginning Delete (GET).");
+
+            try
+            {
+                _logger.LogInformation("Intialising a new TaskModel.");
+                var model = await _taskService.PrepareForDeleteAsync(id);
+
+                _logger.LogInformation("Returning model to view.");
+                return View(model);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError("Error occured in TaskController.Create Action. Error: {ex}", ex); 
+                return View("Error", ex); 
+            }
+        }
+
+        /// <summary>
+        ///     POST Action to delete the passed in <see cref="TaskModel" /> from the db.
+        /// </summary>
+        /// <param name="model">Model of the data.</param>
+        /// <returns>A <see cref="Controller.View()"/>.</returns>
+        [HttpPost]
+        public async Task<IActionResult> Delete(TaskModel model)
+        {
+            _logger.LogInformation("Beginning Delete (POST).");
+
+            _logger.LogInformation("Checking if ModelState is valid.");
+            if (!ModelState.IsValid)
+            {
+                _logger.LogInformation("ModelState is not valid, redirecting to Error view.");
+                return View("Error");
+            }
+
+            try
+            {
+                _logger.LogInformation("Deleting Task #{model.Id} from Repository.", model.Id);
+                await _taskService.DeleteTaskAsync(model);
+
+                _logger.LogInformation("Action complete, redirecting to landing page.");
                 return RedirectToAction("Index", "Home");
             }
-
-            return View();
-        }
-
-        public ActionResult CreateSubTask(TaskModel model)
-        {
-            if (model == null)
+            catch (Exception ex) 
             {
-                model.SubTasks = new List<SubTaskModel>() { };
+                _logger.LogError("Error occured in TaskController.Create Action. Error: {ex}", ex);
+                return View("Error", ex); 
             }
-            model.SubTasks.Add(new SubTaskModel());
-            return RedirectToAction("Create", model);
         }
 
-        // GET: Delete
-        public ActionResult Delete(int id)
-        {
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
-
-            if (task == null)
-            {
-                return View("Error");
-            }
-
-            TaskModel model = new TaskModel();
-            model.Id = task.Id;
-            model.Title = task.Title;
-            model.Notes = task.Notes;
-            model.Deadline = task.Deadline;
-            model.Recurrance = task.Recurrance;
-            model.Priority = task.Priority;
-            model.Position = task.Position;
-            model.IsCompleted = task.IsCompleted;
-            model.UserId = task.UserId;
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> Delete(TaskModel model)
-        { 
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == model.Id);
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home"); 
-        }
-
+        /// <summary>
+        ///     GET Action to return the view for editing a <see cref="TaskModel" />.
+        /// </summary>
+        /// <param name="id">Id of the Task.</param>
+        /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
         // GET: Edit
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var task = _context.Tasks.FirstOrDefault(x => x.Id == id);
+            _logger.LogInformation("Beginning Edit (GET).");
 
-            if (task == null)
+            try
             {
-                return View("Error");
+                _logger.LogInformation("Intialising a new TaskModel.");
+                var model = await _taskService.PrepareForEditAsync(id);
+
+                _logger.LogInformation("Returning model to view.");
+                return View(model);
             }
-
-            TaskModel model = new TaskModel();
-            model.Id = task.Id;
-            model.Title = task.Title;
-            model.Notes = task.Notes;
-            model.Deadline = task.Deadline;
-            model.Recurrance = task.Recurrance;
-            model.Priority = task.Priority;
-            model.Position = task.Position;
-            model.IsCompleted = task.IsCompleted;
-            model.UserId = task.UserId;
-
-            return View(model);
+            catch (Exception ex) 
+            {
+                _logger.LogError("Error occured in TaskController.Create Action. Error: {ex}", ex);
+                return View("Error", ex); 
+            }
         }
 
+        /// <summary>
+        ///     POST Action to edit the passed in <see cref="TaskModel" /> in the db.
+        /// </summary>
+        /// <param name="model">Model of the data.</param>
+        /// <returns>A <see cref="Controller.View()"/>.</returns>
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> Edit(TaskModel model)
+        public async Task<IActionResult> Edit(TaskModel model)
         {
-            if (model == null)
+            _logger.LogInformation("Beginning Edit (POST).");
+
+            _logger.LogInformation("Checking if ModelState is valid.");
+            if (!ModelState.IsValid)
             {
+                _logger.LogInformation("ModelState is not valid, redirecting to Error view.");
                 return View("Error");
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    var entity = _context.Tasks.FirstOrDefault(x => x.Id == model.Id);
-                    entity.Title = model.Title;
-                    entity.Notes = model.Notes;
-                    entity.Deadline = model.Deadline;
-                    entity.Recurrance = model.Recurrance;
-                    entity.Priority = model.Priority;
-                    entity.Position = model.Position;
-                    entity.IsCompleted = model.IsCompleted;
-                    entity.UserId = model.UserId;
+                _logger.LogInformation("Editing Task #{model.Id} in the Repository.", model.Id);
+                await _taskService.EditTaskAsync(model);
 
-                    _context.Update(entity);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    return View("Error");
-                }
+                _logger.LogInformation("Action complete, redirecting to landing page.");
+                return RedirectToAction("Index", "Home");
             }
-            
-            return RedirectToAction("Index", "Home");
+            catch (Exception)
+            {
+                _logger.LogError("Error occured in TaskController.Create Action.");
+                return View("Error");
+            }
+        }
+
+        /// <summary>
+        ///     GET Action to return the view for viewing <see cref="TaskModel.IsCompleted" /> that equal True.
+        /// </summary>
+        /// <returns>A <see cref="TaskModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
+        public async Task<IActionResult> ViewCompletedTasks()
+        {
+            _logger.LogInformation("Beginning ViewCompletedTasks (GET).");
+            try 
+            {
+                _logger.LogInformation("Intialising a new List<TaskModel>.");
+                var model = await _taskService.PrepareForViewCompleted();
+
+                _logger.LogInformation("Returning model to view.");
+                return View(model);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error occured in TaskController.Create Action.");
+                return View("Error");
+            }            
         }
     }
 }

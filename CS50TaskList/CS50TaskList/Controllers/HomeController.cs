@@ -1,81 +1,57 @@
-using CS50TaskList.Data;
 using CS50TaskList.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Mvc.Razor.Compilation;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CS50TaskList.Controllers
 {
+    /// <summary>
+    ///     Controller class for the landing and error pages.
+    /// </summary>
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-        //public HomeController(ILogger<HomeController> logger) { _logger = logger; }
+        private readonly ILogger<HomeController> _logger;
 
-        private readonly ApplicationDbContext _context;
-        public HomeController(ApplicationDbContext context) { _context = context; }
-        
-        public async System.Threading.Tasks.Task<ActionResult> Index() 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="HomeController" /> class.
+        /// </summary>
+        /// <param name="logger">Logger instance.</param>
+        public HomeController(ILogger<HomeController> logger)
         {
-            var tasks = await _context.Tasks.ToListAsync();
-
-            if (tasks == null)
+            _logger = logger;
+        }
+        /// <summary>
+        ///     Action to direct a user to the correct action/view based on their login status.
+        /// </summary>
+        /// <returns>A <see cref="Controller.View"/>.</returns>
+        public IActionResult Index()
+        {
+            _logger.LogInformation("Checking if the user is logged in or not.");
+            if (User.Identity.IsAuthenticated)
             {
-                View();
+                _logger.LogInformation("User is logged in, redirecting to Task.Index.");
+                return RedirectToAction("Index", "Task");
             }
-
-            var model = new List<TaskModel>();
-
-            foreach (var task in tasks)
+            else
             {
-                var item = new TaskModel();
-
-                item.Id = task.Id;
-                item.Title = task.Title;
-                item.Notes = task.Notes;
-                item.Deadline = task.Deadline;
-                item.Recurrance = task.Recurrance;
-                item.Priority = task.Priority;
-                item.Position = task.Position;
-                item.IsCompleted = task.IsCompleted;
-                item.UserId = task.UserId;
-
-                var subtasks = await _context.SubTasks.Where(x => x.TaskId == item.Id).ToListAsync();
-
-                if (subtasks != null)
-                {
-                    var subModel = new List<SubTaskModel>();
-                    foreach (var subtask in subtasks)
-                    {
-                        var subItem = new SubTaskModel {
-                            Id = subtask.Id,
-                            Title = subtask.Title,
-                            Position = subtask.Position,
-                            IsCompleted = subtask.IsCompleted,
-                            ParentId = subtask.TaskId
-                        };
-
-                        subModel.Add(subItem);
-                    }
-                    item.SubTasks = subModel;
-                }
-                
-                model.Add(item);
+                _logger.LogInformation("User is not logged, continuing to view.");
+                return View();
             }
-
-            return View(model);
+            
         }
 
+        /// <summary>
+        ///     Action that displays error information to view.
+        /// </summary>
+        /// <returns>A <see cref="ErrorViewModel"/> passed through to a <see cref="Controller.View()"/>.</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            _logger.LogInformation("Intialising a new ErrorViewModel and assigning the error information to it.");
+            var model = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
+
+            _logger.LogInformation("Returning ErrorViewModel to view.");
+            return View(model);
         }
     }
 }
