@@ -1,7 +1,7 @@
 ﻿namespace CS50TaskList.Enums
 {
     /// <summary>
-    ///     An enum class for the different kinds of priorities a <see cref="Data.Entities.Task"/> can have.
+    ///     An enum class for the different kinds of recurrances a <see cref="Data.Entities.Task"/> can have.
     /// </summary>
     public enum RecurranceType
     {
